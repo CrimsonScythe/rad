@@ -3,9 +3,9 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-// NOTE RUN WITH the command (100000 values to be generated where all are distinct):
+// NOTE RUN WITH the command (100000 values to be generated where all (100000) are distinct):
 // dotnet run 100000 100000
-// second function has runtime 21s, while the first has 31s
+
 namespace rad
 {
     class Program
@@ -13,25 +13,31 @@ namespace rad
         static void Main(String[] args)
         {
             IEnumerable<Tuple<ulong, int>> stream = CreateStream(Int32.Parse(args[0]), Int32.Parse(args[1]));
+
+            BigInteger sum = new BigInteger(0);
+
             var watch = Stopwatch.StartNew();
-            
+    
             foreach (Tuple<ulong, int> item in stream)
             {
-                Console.WriteLine(multiplyShift(new BigInteger(item.Item1)));     
+                sum = multiplyShift(new BigInteger(item.Item1)) + sum;     
             }
             
             watch.Stop();
-            var prevTime = watch.ElapsedMilliseconds;
-            
+
+            Console.WriteLine("value:" + sum);
+            Console.WriteLine("elapsed:" + watch.ElapsedMilliseconds);
+
+            sum=0;            
 
             watch.Restart();
             foreach (Tuple<ulong, int> item in stream)
             {
-                Console.WriteLine(multiplyMod(new BigInteger(item.Item1)));
+                sum = multiplyMod(new BigInteger(item.Item1)) + sum;     
             }
             watch.Stop();
-            Console.WriteLine("elapsed" + prevTime);
-            Console.WriteLine("elapsed" + watch.ElapsedMilliseconds);
+            Console.WriteLine("value:" + sum);
+            Console.WriteLine("elapsed:" + watch.ElapsedMilliseconds);
         }
 
         static BigInteger multiplyShift(BigInteger x) {
