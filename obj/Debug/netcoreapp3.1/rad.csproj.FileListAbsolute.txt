@@ -1,0 +1,13 @@
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.exe
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.deps.json
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.runtimeconfig.json
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.runtimeconfig.dev.json
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.dll
+C:\Users\hasee\Documents\RAD\rad\bin\Debug\netcoreapp3.1\rad.pdb
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.csprojAssemblyReference.cache
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.csproj.CoreCompileInputs.cache
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.AssemblyInfoInputs.cache
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.AssemblyInfo.cs
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.dll
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.pdb
+C:\Users\hasee\Documents\RAD\rad\obj\Debug\netcoreapp3.1\rad.genruntimeconfig.cache
