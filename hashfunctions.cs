@@ -4,18 +4,24 @@ using System;
 namespace rad{
     class HashFunctions{
 
-        public static BigInteger multiplyShift(BigInteger x) {
+        public static UInt64 multiplyShift(UInt64 x) {
             // If the last digit of a binary number is 1, the number is odd
             // binary : 11111110 00111100 00101001 10110010 00001001 10001110 01001001 00110001
             // decimal : 18319563228877572401
             // h(x) = (a*x)>>(64-l)
 
+            // l needs to be < 64
+            int l = 30;
+            UInt64 a = 18319563228877572401UL;
 
-            int l = 63;
-            BigInteger a = new BigInteger(18319563228877572401);
-
-            BigInteger h = a*x;
+            UInt64 h = a*x;
             return h >> (64-l);
+
+            // int l = 63;
+            // UInt64 a = 18319563228877572401;
+
+            // UInt64 h = a*x;
+            // return h >> (64-l);
 
             
         }

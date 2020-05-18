@@ -12,7 +12,10 @@ namespace rad
     {
         static void Main(String[] args)
         {
-            HashTable hashTable = new HashTable(Int32.Parse(args[0]));
+            HashTable hashTable = new HashTable();
+            hashTable.get(5);
+            
+            // HashTable hashTable = new HashTable(Int32.Parse(args[0]));
             // hashTable.get(58);
 
             // IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(Int32.Parse(args[0]), Int32.Parse(args[1]));

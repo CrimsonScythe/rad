@@ -7,7 +7,10 @@ namespace rad
     // billedmængden er 2^l dvs. at den ydre liste i hash tabellen skal have størrelse 2^l 
     class HashTable {
         public List<List<Tuple<int, int>>> hashT {get;set;}
-        public HashTable(int l) {
+        public HashTable() {
+
+            int l = 20;    
+
             var uni = Math.Pow(2, l);
             // here we create an empty list of lists
             hashT = new List<List<Tuple<int, int>>>();
@@ -19,7 +22,7 @@ namespace rad
         }
 
         // get(x): Skal returnere den værdi, der tilhører nøglen x. Hvis x ikke er i tabellen skal der returneres 0.
-        public void get(int x) {
+        public void get(UInt64 x) {
             // Console.WriteLine(hashT.Capacity);
             // List<Tuple<int,int>> trt = new List<Tuple<int,int>>();
             // trt.Add(new Tuple<int, int>(5 , 8));
@@ -33,11 +36,9 @@ namespace rad
 
             // 1. we compute h(x)
             // 2. we check to see if this value exists in the outer list
-            // var hashVal = HashFunctions.multiplyShift(x);
-            // long ii=0;
-
-            // hashT[ii]
-
+            var hashVal = HashFunctions.multiplyShift(x);
+            var rrr= hashT[(int)hashVal];
+            Console.WriteLine(rrr);
         }
 
         // set(x, v): Skal sætte nøglen x til at have værdien v. Hvis x ikke allerede er i tabellen
