@@ -49,7 +49,15 @@ namespace rad
 
         // increment(x, d): Skal lægge d til værdien tilhørende x. Hvis x ikke er i tabellen, skal
         // x tilføjes til tabellen med værdien d
-        public void increment(int x, int d){
+        public void increment(UInt64 x, int d){
+            
+            var hashVal = HashFunctions.multiplyShift(x);
+            if (hashT[(int)hashVal].Exists(x => x.Key.Equals(x))){
+                var index = hashT[(int)hashVal].FindIndex(0,2,x => x.Key.Equals(x));
+                hashT[(int)hashVal][index].Value += d;
+            } else {
+                hashT[(int)hashVal].Add(new MutableKeyValuePair<int, int>((int)x, d));
+            }
 
         }
 
