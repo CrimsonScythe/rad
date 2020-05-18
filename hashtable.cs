@@ -18,7 +18,6 @@ namespace rad
             for (int i = 0; i<uni; i++){
                 hashT.Add(new List<MutableKeyValuePair<int,int>>());
             }
-
         }
 
         // get(x): Skal returnere den værdi, der tilhører nøglen x. Hvis x ikke er i tabellen skal der returneres 0.
@@ -33,18 +32,26 @@ namespace rad
             // } 
 
             var hashVal = HashFunctions.multiplyShift(x);
-            if (hashT[(int)hashVal].Exists(x => x.Key.Equals(x))) {
-                return hashT[(int)hashVal].Find(t => t.Key.Equals(x)).Value;
-            } else {
-                return 0;
-            } 
-           
+
+            if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x))) {
+                return hashT[(int)hashVal].Find(keyValPair => keyValPair.Key.Equals((int)x)).Value;
+            } return 0;
         }
 
         // set(x, v): Skal sætte nøglen x til at have værdien v. Hvis x ikke allerede er i tabellen
         // så tilføjes den til tabellen med værdien v.
-        public void set(int x, int v){
-
+        public void set(UInt64 x, int v)
+        {
+            var hashVal = HashFunctions.multiplyShift(x);
+            if (hashT[(int) hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x)))
+            {
+                var index = hashT[(int)hashVal].FindIndex(keyValPair => keyValPair.Key.Equals((int)x));
+                hashT[(int)hashVal][index].Value = v;
+                Console.WriteLine("Key found. Overwriting value");
+            } else {
+                Console.WriteLine("Key wasn't found. Hashing k,v to hash table.");
+                hashT[(int)hashVal].Add(new MutableKeyValuePair<int, int>((int)x, v));
+            }
         }
 
         // increment(x, d): Skal lægge d til værdien tilhørende x. Hvis x ikke er i tabellen, skal
@@ -52,14 +59,12 @@ namespace rad
         public void increment(UInt64 x, int d){
             
             var hashVal = HashFunctions.multiplyShift(x);
-            if (hashT[(int)hashVal].Exists(x => x.Key.Equals(x))){
-                var index = hashT[(int)hashVal].FindIndex(0,2,x => x.Key.Equals(x));
+            if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals(x))){
+                var index = hashT[(int)hashVal].FindIndex(0,2,keyValPair => keyValPair.Key.Equals(x));
                 hashT[(int)hashVal][index].Value += d;
             } else {
                 hashT[(int)hashVal].Add(new MutableKeyValuePair<int, int>((int)x, d));
             }
-
         }
-
     }
 }
