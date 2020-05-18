@@ -6,31 +6,38 @@ namespace rad
     // hashtabellen vil være en list of lists
     // billedmængden er 2^l dvs. at den ydre liste i hash tabellen skal have størrelse 2^l 
     class HashTable {
-        public List<List<Tuple<int, int>>> hashT {get;set;}
+        public List<List<MutableKeyValuePair<int, int>>> hashT {get;set;}
         public HashTable() {
 
             int l = 20;    
 
             var uni = Math.Pow(2, l);
             // here we create an empty list of lists
-            hashT = new List<List<Tuple<int, int>>>();
+            hashT = new List<List<MutableKeyValuePair<int, int>>>();
 
             for (int i = 0; i<uni; i++){
-                hashT.Add(new List<Tuple<int,int>>());
+                hashT.Add(new List<MutableKeyValuePair<int,int>>());
             }
 
         }
 
         // get(x): Skal returnere den værdi, der tilhører nøglen x. Hvis x ikke er i tabellen skal der returneres 0.
         public int get(UInt64 x) {
-           
+        //    Dictionary<int,int>. dic = new Dictionary<int,int>().ContainsKey()
+            // var hashVal = HashFunctions.multiplyShift(x);
+            // if (hashT[(int)hashVal].Exists(t => t.ContainsKey((int)x))){
+                
+            //     return hashT[(int)hashVal].Find(x => x.);
+            // } else {
+            //     return 0;
+            // } 
+
             var hashVal = HashFunctions.multiplyShift(x);
-            if (hashT[(int)hashVal].Exists(t => t.Item1.Equals(x))){
-                return hashT[(int)hashVal].Find(x => x.Item1.Equals(x)).Item2;
+            if (hashT[(int)hashVal].Exists(x => x.Key.Equals(x))) {
+                return hashT[(int)hashVal].Find(t => t.Key.Equals(x)).Value;
             } else {
                 return 0;
             } 
-
            
         }
 
