@@ -59,10 +59,12 @@ namespace rad
         public void increment(UInt64 x, int d){
             
             var hashVal = HashFunctions.multiplyShift(x);
-            if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals(x))){
-                var index = hashT[(int)hashVal].FindIndex(0,2,keyValPair => keyValPair.Key.Equals(x));
-                hashT[(int)hashVal][index].Value += d;
+            if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x))){
+                Console.WriteLine("found");
+                var index = hashT[(int)hashVal].FindIndex(keyValPair => keyValPair.Key.Equals((int)x));
+                hashT[(int)hashVal][index].Value = hashT[(int)hashVal][index].Value + d;
             } else {
+                Console.WriteLine("not found");
                 hashT[(int)hashVal].Add(new MutableKeyValuePair<int, int>((int)x, d));
             }
         }

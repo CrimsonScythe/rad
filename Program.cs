@@ -16,8 +16,8 @@ namespace rad
             Console.WriteLine(hashTable.get(5));
             hashTable.set(5,10);
             Console.WriteLine(hashTable.get(5));
-            hashTable.set(5,10);
-
+            hashTable.increment(5, 1);
+            Console.WriteLine(hashTable.get(5));
             // HashTable hashTable = new HashTable(Int32.Parse(args[0]));
             // hashTable.get(58);
 
