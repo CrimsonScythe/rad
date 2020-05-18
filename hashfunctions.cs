@@ -16,42 +16,35 @@ namespace rad{
 
             UInt64 h = a*x;
             return h >> (64-l);
-
-            // int l = 63;
-            // UInt64 a = 18319563228877572401;
-
-            // UInt64 h = a*x;
-            // return h >> (64-l);
-
             
         }
 
-        public static BigInteger multiplyMod(BigInteger x) {
+        public static UInt64 multiplyMod(UInt64 x) {
             // h(x) = ((a*x+b) mod p) mod 2^l
 
             int q = 89;
             
-            BigInteger p = new BigInteger(Math.Pow(2, q) - 1);
-            int l = 63;
-            BigInteger m = new BigInteger(Math.Pow(2, l));
+            UInt64 p = (UInt64)(Math.Pow(2, q) - 1);
+            int l = 20;
+            UInt64 m = (UInt64)(Math.Pow(2, l));
             // computes (a*x+b) mod p fast
             // as x < 2q we can use the code in the interm function to compute
             // deciaml values are generated from random.org
             BigInteger a = BigInteger.Parse("233803183637780797534382925");
             BigInteger b = BigInteger.Parse("308071719960255608440264707");
-            x = (a*x+b);
-            BigInteger inter = interim(x,p,q);
+            var res = (a*x+b);
+            UInt64 inter = interim(res,p,q);
             // computes y mod 2^l frim slides
             return inter&(m-1);
 
         }
 
-        static BigInteger interim(BigInteger x, BigInteger p, int q) {
+        static UInt64 interim(BigInteger x, BigInteger p, int q) {
             BigInteger y = (x&p) + (x >> q);
             if (y >= p){
                 y = y - p;
             }
-            return y;
+            return (UInt64) y;
         }
 
     }
