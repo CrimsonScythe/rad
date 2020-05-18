@@ -11,7 +11,7 @@ namespace rad{
             // h(x) = (a*x)>>(64-l)
 
             // l needs to be < 64
-            int l = 30;
+            int l = 20;
             UInt64 a = 18319563228877572401UL;
 
             UInt64 h = a*x;

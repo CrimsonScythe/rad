@@ -22,23 +22,16 @@ namespace rad
         }
 
         // get(x): Skal returnere den værdi, der tilhører nøglen x. Hvis x ikke er i tabellen skal der returneres 0.
-        public void get(UInt64 x) {
-            // Console.WriteLine(hashT.Capacity);
-            // List<Tuple<int,int>> trt = new List<Tuple<int,int>>();
-            // trt.Add(new Tuple<int, int>(5 , 8));
-            // hashT.Add(trt);
-            // hashT.Add(trt);
-            // hashT.Add(trt);
-            
-            // Console.WriteLine((hashT[0][0].Item1));
-            // Console.WriteLine((hashT[1][0].Item1));
-            // Console.WriteLine((hashT[2][0].Item1));
-
-            // 1. we compute h(x)
-            // 2. we check to see if this value exists in the outer list
+        public int get(UInt64 x) {
+           
             var hashVal = HashFunctions.multiplyShift(x);
-            var rrr= hashT[(int)hashVal];
-            Console.WriteLine(rrr);
+            if (hashT[(int)hashVal].Exists(t => t.Item1.Equals(x))){
+                return hashT[(int)hashVal].Find(x => x.Item1.Equals(x)).Item2;
+            } else {
+                return 0;
+            } 
+
+           
         }
 
         // set(x, v): Skal sætte nøglen x til at have værdien v. Hvis x ikke allerede er i tabellen
