@@ -22,6 +22,7 @@ namespace rad
             int n=1000000;
             int l=20;
             SFunc(Generator.CreateStream(n, l));
+        
 
             // HashTable hashTable = new HashTable(Int32.Parse(args[0]));
             // hashTable.get(58);
