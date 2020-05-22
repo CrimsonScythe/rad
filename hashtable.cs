@@ -3,13 +3,19 @@ using System;
 
 namespace rad
 {
+    
     // hashtabellen vil være en list of lists
     // billedmængden er 2^l dvs. at den ydre liste i hash tabellen skal have størrelse 2^l 
     class HashTable {
+        
         public List<List<MutableKeyValuePair<int, int>>> hashT {get;set;}
-        public HashTable() {
+        public int l {get;set;}
+        public HashFuncType func {get;set;}
+        public HashTable(int ll, HashFuncType hashfunction) {
 
-            int l = 20;    
+            func = hashfunction;
+            
+            l = ll;    
 
             var uni = Math.Pow(2, l);
             // here we create an empty list of lists
@@ -22,8 +28,15 @@ namespace rad
 
         // get(x): Skal returnere den værdi, der tilhører nøglen x. Hvis x ikke er i tabellen skal der returneres 0.
         public int get(UInt64 x) {
+            
+            ulong hashVal;
 
-            var hashVal = HashFunctions.multiplyMod(x);
+            if (func == HashFuncType.mod){
+                hashVal = HashFunctions.multiplyMod(x, l);
+            } else {
+                hashVal = HashFunctions.multiplyShift(x, l);
+            }
+            
 
             if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x))) {
                 return hashT[(int)hashVal].Find(keyValPair => keyValPair.Key.Equals((int)x)).Value;
@@ -34,7 +47,17 @@ namespace rad
         // så tilføjes den til tabellen med værdien v.
         public void set(UInt64 x, int v)
         {
-            var hashVal = HashFunctions.multiplyMod(x);
+
+            ulong hashVal;
+
+            if (func == HashFuncType.mod){
+                hashVal = HashFunctions.multiplyMod(x, l);
+            } else {
+                hashVal = HashFunctions.multiplyShift(x, l);
+            }
+
+
+
             if (hashT[(int) hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x)))
             {
                 var index = hashT[(int)hashVal].FindIndex(keyValPair => keyValPair.Key.Equals((int)x));
@@ -50,7 +73,15 @@ namespace rad
         // x tilføjes til tabellen med værdien d
         public void increment(UInt64 x, int d){
             
-            var hashVal = HashFunctions.multiplyMod(x);
+            ulong hashVal;
+
+            if (func == HashFuncType.mod){
+                hashVal = HashFunctions.multiplyMod(x, l);
+            } else {
+                hashVal = HashFunctions.multiplyShift(x, l);
+            }
+
+
             if (hashT[(int)hashVal].Exists(keyValPair => keyValPair.Key.Equals((int)x))){
                 // Console.WriteLine("found");
                 var index = hashT[(int)hashVal].FindIndex(keyValPair => keyValPair.Key.Equals((int)x));

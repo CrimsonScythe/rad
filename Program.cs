@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace rad
 {
+    public enum HashFuncType {shift, mod}
     class Program
     {
         static void Main(String[] args)
@@ -19,45 +20,68 @@ namespace rad
             // hashTable.increment(5, 1);
             // Console.WriteLine(hashTable.get(5));
 
-            int n=1000000;
-            int l=20;
-            SFunc(Generator.CreateStream(n, l));
-        
-
-            // HashTable hashTable = new HashTable(Int32.Parse(args[0]));
-            // hashTable.get(58);
-
-            // IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(Int32.Parse(args[0]), Int32.Parse(args[1]));
-
-            // BigInteger sum = new BigInteger(0);
-
-            // var watch = Stopwatch.StartNew();
-    
-            // foreach (Tuple<ulong, int> item in stream)
-            // {
-            //     sum = HashFunctions.multiplyShift(new BigInteger(item.Item1)) + sum;     
-            // }
             
-            // watch.Stop();
 
-            // Console.WriteLine("value:" + sum);
-            // Console.WriteLine("elapsed:" + watch.ElapsedMilliseconds);
+            // Exercise1(Int32.Parse(args[0]), Int32.Parse(args[1]));
 
-            // sum=0;            
-
-            // watch.Restart();
-            // foreach (Tuple<ulong, int> item in stream)
-            // {
-            //     sum = HashFunctions.multiplyMod(new BigInteger(item.Item1)) + sum;     
-            // }
-            // watch.Stop();
-            // Console.WriteLine("value:" + sum);
-            // Console.WriteLine("elapsed:" + watch.ElapsedMilliseconds);
+            Exercise3(HashFuncType.mod);
+            
         }
 
-        static void SFunc(IEnumerable<Tuple<ulong , int>> stream) {
+        static void Exercise3(HashFuncType type) {
+            // l=1 .. 25
+            // n=1000000
+           
+            int n=1000000;
+            List<int> llist = new List<int> {5,10,15,20,25};
+            var watch = new Stopwatch();
+        
+
+            foreach (int lval in llist){
+                watch.Start();
+                SFunc(Generator.CreateStream(n, lval), lval, type);
+                watch.Stop();
+                Console.WriteLine("type: " +type + " l is: " + lval+ " time: " + watch.ElapsedMilliseconds);
+                watch.Reset();
+            }
+            
+            
+        }
+
+        static void Exercise1(Int32 n, Int32 l) {
+
+
+            IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(n, l);
+
+            BigInteger sum = new BigInteger(0);
+
+            var watch = Stopwatch.StartNew();
+    
+            foreach (Tuple<ulong, int> item in stream)
+            {
+                sum = HashFunctions.multiplyShift(item.Item1, l) + sum;     
+            }
+            
+            watch.Stop();
+
+            Console.WriteLine("MultiplyShift sum:" + sum);
+            Console.WriteLine("MultiplyShift elapsed:" + watch.ElapsedMilliseconds);
+
+            sum=0;            
+
+            watch.Restart();
+            foreach (Tuple<ulong, int> item in stream)
+            {
+                sum = HashFunctions.multiplyMod(item.Item1, l) + sum;     
+            }
+            watch.Stop();
+            Console.WriteLine("MultiplyMod sum:" + sum);
+            Console.WriteLine("MultiplyMod elapsed:" + watch.ElapsedMilliseconds);
+        }
+
+        static void SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
             // we begin by storing the key value pairs in the hash table using the hashfunctions
-            HashTable hashTable = new HashTable();
+            HashTable hashTable = new HashTable(l, funcType);
             // the loop below computes s(x)
             foreach(Tuple<ulong, int> pair in stream){
                 
