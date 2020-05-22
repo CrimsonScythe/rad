@@ -24,10 +24,21 @@ namespace rad
 
             // Exercise1(Int32.Parse(args[0]), Int32.Parse(args[1]));
 
-            Exercise3(HashFuncType.mod);
-            
+            // Exercise3(HashFuncType.mod);
+
+            Exercise6(1000, 20);
+
         }
 
+        static void Exercise6(Int32 n, Int32 l)
+        {
+            IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(n, l);
+
+            var SecondMoment = Algorithms.CountSketch(stream, 1);
+            Console.WriteLine(SecondMoment);
+        }
+        
+        
         static void Exercise3(HashFuncType type) {
             // l=1 .. 25
             // n=1000000
@@ -102,7 +113,6 @@ namespace rad
 
             Console.WriteLine("S is:" + sum);
         }
-
     }
 }
 

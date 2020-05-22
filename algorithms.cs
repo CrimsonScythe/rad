@@ -1,17 +1,31 @@
 using System.Numerics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace rad{
     class Algorithms{
 
+
+         /// <summary>
+         ///   Algorithm 1 / g(x) as described in the "Second moment estimation" notes, p. 6. 
+         /// </summary>
+         /// <param name="x">
+         ///  Takes UInt64 number as input (key to be hashed)
+         /// </param>
+         /// <returns>
+         ///   Returns hashed value
+         /// </returns>
+         ///
         public static UInt64 Algorithm1(UInt64 x) {
-            // to get the a's which must be random in [p], we use random.org/bytes
-            // a need to be 89 bits long each, so we generate a 12 byte number and throw away the first 7 bits to get 89 bits
-            // 10111110 01000110 01000011 10011110 10011000 01000111 11100001 11111100 01010110 11101101 10000011 0
-            // 10101110 01000001 10100001 00101111 00001111 11010111 10000100 01011010 11010001 10110111 01111100 1
-            // 01011100 00010110 11101001 00111000 10101010 00001100 01000011 00100001 11001011 00010111 11101110 0
-            // 01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
+            /*
+                To get the a's which must be random in [p], we use random.org/bytes
+                a need to be 89 bits long each, so we generate a 12 byte number and throw away the first 7 bits to get 89 bits
+                10111110 01000110 01000011 10011110 10011000 01000111 11100001 11111100 01010110 11101101 10000011 0
+                10101110 01000001 10100001 00101111 00001111 11010111 10000100 01011010 11010001 10110111 01111100 1
+                01011100 00010110 11101001 00111000 10101010 00001100 01000011 00100001 11001011 00010111 11101110 0
+                01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
+            */
             
             UInt64 p = (UInt64)(BigInteger.Pow(2, 89)-1);
             int b = 89;
@@ -21,8 +35,7 @@ namespace rad{
             a.Add(BigInteger.Parse("222658739283255370454544348"));
             a.Add(BigInteger.Parse("193790846148879967259151967"));
             int q = a.Capacity;
-
-
+            
             BigInteger y = a[q-1];
             for(int i = q-2; i > 0; i--) {
                 y = y*x+a[i];
@@ -33,86 +46,95 @@ namespace rad{
             }
             return (UInt64) y;
         }
-
+        
+        /// <summary>
+        /// Algorithm 2, page 6, "Second moment estimation" (Thorup)
+        /// </summary>
+        /// <param name="x">
+        ///             Key x in [u]. 
+        /// </param>
+        /// <param name="g">
+        ///            4-universal hash function to use (e.g. algorithm 1), 
+        ///            which itself takes a UInt64 key and returns hash value
+        /// </param>
         public static (UInt64, UInt64) Algorithm2(UInt64 x, Func<UInt64, UInt64> g, int t = 64) {
-            /**
-            Questions: The algorithm 2 described in the notes, doesn't seem to encompass the whole
-            function described in task 5. Rather Task 5 uses algorithm 2 together with some additional
-            code to achieve the functionality of the function described in the task. For now, I'll expand
-            algorithm 2, this function, to also encompass the function described in task 5.
-
-            Algorithm 2, page 6, "Second moment estimation" (Thorup)
-
-            <param name="x">
-                Key x belonging to/in [u]. 
-            </param>
-            <param name="t">
-                The k to use in the calculation of m = 2^k. Default value is 64.
-            </param>
-            <param name="g">
-                4-universal hash function to use (e.g. algorithm 1), 
-                which takes a UInt64 key and returns hash value
-            </param>
-            **/
+            /*
+            QUESTIONS WE NEED ANSWERING:
+            - what should we put t to be? 
+            - Should we use m, or k, or t in "UInt64 hx = gx&((ulong)m-1);"
+            - if k, what is k? Is it equal to t? 
+            */
             
-            // Accord. to task 5: "Let m = 2^t <= 2^64"
-            // UInt64 m = (UInt64)BigInteger.Pow(2, t);
+            UInt64 m = (UInt64)(BigInteger.Pow(2, t));
             
             // b is set to 89 bits according to p. 5 of "Implementeringsprojekt.pdf"
-            // and is related to p. 
+            // as 2^(89)-1 creates a Mersenne prime number. 
             int b = 89;
 
             UInt64 gx = g(x);
-            // Unsure whether to use m here, or t (k) = log2 m = 64 in this instance (assuming t (k) = 64)
-            UInt64 hx = gx&((ulong)t-1);
+            // Should it be m or k that's used here? In the notes, they use k.
+            // If k, what should the value of k be? 4? 64? Anything <=64? Or t?
+            // As t is used in calculating m, according to task 6 description, p. 5. 
+            // Assume for now, m
+            UInt64 hx = gx&((ulong)m-1);
             UInt64 bx = gx >> (b-1);
             UInt64 sx = 1 - 2*bx;
 
             return(hx, sx);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream">Stream of keys generated by Generator.CreateStream.</param>
+        /// <param name="epsilon">error factor (according to web)</param>
+        public static UInt64 CountSketch(IEnumerable<Tuple<ulong , int>> stream, int epsilon) {
+            /*
+             * "Basic Count Sketch for Second Moment",
+             * from 2moment-lect.pdf, p. 16, sl. 5.
 
+            QUESTIONS WE NEED ANSWERING:
+            - (var)epsilon is error factor. What should we set it to? 
+            - What is delta? What should we set it to? 
 
-        public static void CountSketch() {
-            // /**
-            // "Basic Count Sketch for Second Moment",
-            // from 2moment-lect.pdf, p. 16, sl. 5. 
-            // **/
+            */
 
             // //// BCS-INITIALIZE part ////
-
-            // // Is epsilon a parameter?
-            // UInt64 k = Ceiling(8/Pow(epsilon, 2);
+            
+            UInt64 k = (UInt64) Math.Ceiling(8/Math.Pow(epsilon, 2));
             
             // // Pick 4-universal s and h 
             // // (these are set by algorithm2 and can't be picked)
 
             // // C[0, ..., k-1] <-- 0
-            // List<UInt64> C = Enumerable.Repeat(0, k-1).ToList();
+            List<UInt64> C = new List<UInt64>();
+            for (UInt64 i = 0; i < k; i++) {
+                C.Add(0U);
+            }
             
             // //// BCS-PROCESS part ////
-            // // Where do we get the x from?? Can't be a parameter for CountSketch, as we're probably expecting a whole stream.. or??
-            // // Is all this for one key or for a stream??
-            // var hashValues = Algorithm2(x, Algorithm1, t=64)
-            // hx = hashValues[0]
-            // sx = hashValues[1]
-            // // What is delta??
-            // // So, this should probably be in a loop of some sort, going over a stream of keys right??
-            // C[hx] = C[hx] + sx * delta
+            foreach (Tuple<ulong, int> pair in stream)
+            {
+                var hashValues = Algorithm2(pair.Item1, Algorithm1, 64);
+                var hx = hashValues.Item1;
+                var sx = hashValues.Item2;
+                
+                // What is delta?? Like epsilon, it's some parameter that has to do with precision vs. memory? 
+                // placeholder value for delta, do change.
+                var delta = 1U;
+                C[(int) hx] = C[(int) hx] + sx * delta;
+            }
             
-
             // //// BCS-2ND-MOMENT ////
             // // F^hat_2. 
-            // int secondMoment = 0
+            UInt64 secondMoment = 0;
 
-            // for (int i = 0; i < k+1; i++) {
-            //     secondMoment = secondMoment + Pow(C[i], 2)
-            // }
+            for (int i = 0; i < (int)k+1; i++)
+            {
+                secondMoment = secondMoment + (UInt64) BigInteger.Pow(C[i], 2);
+            }
 
-
-
-            
-        }        
-
+            return secondMoment;
+        }
     }
 }
