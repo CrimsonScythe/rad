@@ -121,7 +121,9 @@ namespace rad{
                 
                 // What is delta?? Like epsilon, it's some parameter that has to do with precision vs. memory? 
                 // placeholder value for delta, do change.
-                var delta = 1U;
+                
+                // delta is the data portion of the stream. So pair.Item2
+                var delta = (ulong) pair.Item2;
                 C[(int) hx] = C[(int) hx] + sx * delta;
             }
             
@@ -129,6 +131,7 @@ namespace rad{
             // // F^hat_2. 
             UInt64 secondMoment = 0;
 
+            // TODO: why iterating over k+1 ?
             for (int i = 0; i < (int)k+1; i++)
             {
                 secondMoment = secondMoment + (UInt64) BigInteger.Pow(C[i], 2);
