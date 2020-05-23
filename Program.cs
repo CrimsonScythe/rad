@@ -11,8 +11,14 @@ namespace rad
     public enum HashFuncType {shift, mod}
     class Program
     {
+        public static string bytes;
         static void Main(String[] args)
         {
+            // randombytes.txt downloaded from random.org is a string of random bits
+            // here we simply read the file and store it as one huge string.
+            // the bytes used by the algorithms are then extracted from this variable
+            bytes = System.IO.File.ReadAllText("randombytes.txt");
+
             // HashTable hashTable = new HashTable();
             // Console.WriteLine(hashTable.get(5));
             // hashTable.set(5,10);
@@ -26,7 +32,36 @@ namespace rad
 
             // Exercise3(HashFuncType.mod);
 
-            Exercise6(1000, 20);
+            // Exercise6(1000, 20);
+
+            
+            Exercise7();
+
+            
+
+        }
+
+        static void Exercise7() {
+                
+            int n = 10000;
+            int l = 25;
+            var epsilon = 0.001;
+
+            var stream = Generator.CreateStream(n,l);
+
+            // calculate S from hashing with chaining from part 1
+            // bascially we get the exact value of n i.e. 10000
+            SFunc(stream, l, HashFuncType.mod);
+            
+            int index=0;
+            for (int i = 0; i < 100; i++){
+                // i    = 0,1,2,3...
+                // index= 0,4,8,12
+                index = i*4;
+                var estimate = Algorithms.CountSketch(stream, epsilon, index);
+                Console.WriteLine(estimate);
+                
+            }
 
         }
 
@@ -34,7 +69,7 @@ namespace rad
         {
             IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(n, l);
 
-            var SecondMoment = Algorithms.CountSketch(stream, 1);
+            var SecondMoment = Algorithms.CountSketch(stream, 1, 0);
             Console.WriteLine(SecondMoment);
         }
         
@@ -88,6 +123,8 @@ namespace rad
             watch.Stop();
             Console.WriteLine("MultiplyMod sum:" + sum);
             Console.WriteLine("MultiplyMod elapsed:" + watch.ElapsedMilliseconds);
+            
+            
         }
 
         static void SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
