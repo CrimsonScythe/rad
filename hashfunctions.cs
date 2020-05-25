@@ -15,8 +15,8 @@ namespace rad{
             // int l = 20;
             UInt64 a = 18319563228877572401UL;
 
-            UInt64 h = a*x;
-            return h >> (64-l);
+            // UInt64 h = a*x;
+            return a*x >> (64-l);
             
         }
 

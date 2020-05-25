@@ -46,15 +46,17 @@ namespace rad
             int n = 10000;
             int l = 25;
             var epsilon = 0.001;
+            // var epsilon = 0.0003;
 
             var stream = Generator.CreateStream(n,l);
 
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
-            SFunc(stream, l, HashFuncType.mod);
+            SFunc(stream, l, HashFuncType.shift);
             
             int index=0;
             double MSE=0;
+            double mean=0;
             // the value S is in reality just the number of items in the data stream
             int S = n;
 
@@ -66,12 +68,18 @@ namespace rad
                 double estimate = Algorithms.CountSketch(stream, epsilon, index);
                 Console.WriteLine(estimate);
                 // we compute the mean-square error
-                MSE += Math.Pow(estimate - S, 2);
+                MSE += Math.Pow((estimate - S), 2);
+                // we also compute the mean
+                mean += estimate;
             }
 
             // we compute the mean-square error
-            MSE /= 100;
+            MSE = MSE/100;
+            // so that MSE is the correct variance? page. 6 implementeringsopgave
             Console.WriteLine("mean-squared error:" + MSE);
+            mean /= 100;
+            Console.WriteLine("mean:" + mean);
+
         }
 
         static void Exercise6(Int32 n, Int32 l)
