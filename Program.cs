@@ -54,15 +54,24 @@ namespace rad
             SFunc(stream, l, HashFuncType.mod);
             
             int index=0;
+            double MSE=0;
+            // the value S is in reality just the number of items in the data stream
+            int S = n;
+
             for (int i = 0; i < 100; i++){
                 // i    = 0,1,2,3...
                 // index= 0,4,8,12
                 index = i*4;
-                var estimate = Algorithms.CountSketch(stream, epsilon, index);
+                // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
+                double estimate = Algorithms.CountSketch(stream, epsilon, index);
                 Console.WriteLine(estimate);
-                
+                // we compute the mean-square error
+                MSE += Math.Pow(estimate - S, 2);
             }
 
+            // we compute the mean-square error
+            MSE /= 100;
+            Console.WriteLine("mean-squared error:" + MSE);
         }
 
         static void Exercise6(Int32 n, Int32 l)
