@@ -131,7 +131,7 @@ namespace rad{
         ///            4-universal hash function to use (e.g. algorithm 1), 
         ///            which itself takes a UInt64 key and returns hash value
         /// </param>
-        public static (UInt64, UInt64) Algorithm2(UInt64 x, Func<UInt64, int, UInt64> g, int index, int t = 64) {
+        public static (UInt64, UInt64) Algorithm2(UInt64 x, Func<UInt64, int, UInt64> g, int index, int t) {
             /*
             QUESTIONS WE NEED ANSWERING:
             - what should we put t to be? 
@@ -175,6 +175,11 @@ namespace rad{
 
             */
 
+            // compute t
+            // 2^t = 8/epsilon^2
+            // t = log_{2}(8/epsilon^2)
+            int t = (int) Math.Log2(8/(Math.Pow(epsilon, 2)));
+
             // //// BCS-INITIALIZE part ////
             
             UInt64 k = (UInt64) Math.Ceiling(8/Math.Pow(epsilon, 2));
@@ -191,7 +196,7 @@ namespace rad{
             // //// BCS-PROCESS part ////-
             foreach (Tuple<ulong, int> pair in stream)
             {
-                var hashValues = Algorithm2(pair.Item1, Algorithm1,index, 64);
+                var hashValues = Algorithm2(pair.Item1, Algorithm1,index, t);
                 var hx = hashValues.Item1;
                 var sx = hashValues.Item2;
                 
