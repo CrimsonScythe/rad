@@ -71,7 +71,7 @@ namespace rad
                 double estimate = Algorithms.CountSketch(stream, epsilon, index);
                 estimates.Add(estimate);
                 estimates.Sort();
-                Console.WriteLine(estimate);
+                //Console.WriteLine(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);
                 // we also compute the mean
@@ -84,7 +84,7 @@ namespace rad
             for (int i = 0; i < estimates.Count; i++)
             {
                 var _string = "{0},{1}";
-                var _formatted = string.Format(_string, i.ToString(), estimates[i].ToString());
+                var _formatted = string.Format(_string, (i+1).ToString(), estimates[i].ToString());
                 linesList.Add(_formatted);
             }
 
@@ -97,7 +97,6 @@ namespace rad
             Console.WriteLine("mean-squared error:" + MSE);
             mean /= 100;
             Console.WriteLine("mean:" + mean);
-
         }
 
         static void Exercise6(Int32 n, Int32 l)
@@ -179,7 +178,8 @@ namespace rad
             UInt64 sum = 0UL;
             foreach(List<MutableKeyValuePair<int, int>> lst in hashTable.hashT){
                 foreach(MutableKeyValuePair<int,int> pair in lst){
-                    sum += (ulong) Math.Pow(pair.Value, 2);
+                    Console.WriteLine(pair.Key);
+                    sum += (ulong) Math.Pow(pair.Key, 2);
                 }
             }
 
