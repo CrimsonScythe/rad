@@ -60,19 +60,37 @@ namespace rad
             // the value S is in reality just the number of items in the data stream
             int S = n;
 
+            List<double> estimates = new List<double>();
+            
             for (int i = 0; i < 100; i++){
                 // i    = 0,1,2,3...
                 // index= 0,4,8,12
                 index = i*4;
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
+                // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
                 double estimate = Algorithms.CountSketch(stream, epsilon, index);
+                estimates.Add(estimate);
+                estimates.Sort();
                 Console.WriteLine(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);
                 // we also compute the mean
                 mean += estimate;
             }
+            
+            // Output estimates to CSV file
+            List<string> linesList = new List<string>();
 
+            for (int i = 0; i < estimates.Count; i++)
+            {
+                var _string = "{0},{1}";
+                var _formatted = string.Format(_string, i.ToString(), estimates[i].ToString());
+                linesList.Add(_formatted);
+            }
+
+            string[] linesArray = linesList.ToArray();
+            System.IO.File.WriteAllLines(@"estimates.csv", linesArray);
+            
             // we compute the mean-square error
             MSE = MSE/100;
             // so that MSE is the correct variance? page. 6 implementeringsopgave
