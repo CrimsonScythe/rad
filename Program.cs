@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 // NOTE RUN WITH the command (100000 values to be generated where all (100000) are distinct):
 // dotnet run 100000 100000
@@ -60,7 +61,8 @@ namespace rad
             // the value S is in reality just the number of items in the data stream
             int S = n;
 
-            List<double> estimates = new List<double>();
+            List<double> estimatesUnsorted = new List<double>();
+            List<double> estimatesSorted;
             
             for (int i = 0; i < 100; i++){
                 // i    = 0,1,2,3...
@@ -69,8 +71,7 @@ namespace rad
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
                 // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
                 double estimate = Algorithms.CountSketch(stream, epsilon, index);
-                estimates.Add(estimate);
-                estimates.Sort();
+                estimatesUnsorted.Add(estimate);
                 //Console.WriteLine(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);
@@ -78,18 +79,17 @@ namespace rad
                 mean += estimate;
             }
             
-            // Output estimates to CSV file
-            List<string> linesList = new List<string>();
-
-            for (int i = 0; i < estimates.Count; i++)
-            {
-                var _string = "{0},{1}";
-                var _formatted = string.Format(_string, (i+1).ToString(), estimates[i].ToString());
-                linesList.Add(_formatted);
-            }
-
-            string[] linesArray = linesList.ToArray();
-            System.IO.File.WriteAllLines(@"estimates.csv", linesArray);
+            estimatesSorted = new List<double>(estimatesUnsorted);
+            estimatesSorted.Sort();
+            
+            /*
+             * OUTPUT ESTIMATES TO CSV FILE
+             */
+            WriteToCSV(estimatesUnsorted, "estimates_unsorted.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted.csv");
+            /*
+             * 
+             */
             
             // we compute the mean-square error
             MSE = MSE/100;
@@ -97,6 +97,18 @@ namespace rad
             Console.WriteLine("mean-squared error:" + MSE);
             mean /= 100;
             Console.WriteLine("mean:" + mean);
+            
+            
+            /*
+             * CALCULATE MEDIAN AND OUTPUT TO CSV FILE
+             */
+            List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i - 4) % 10 == 0));
+            
+            WriteToCSV(M, "medians.csv");
+            
+            /*
+             * 
+             */
         }
 
         static void Exercise6(Int32 n, Int32 l)
@@ -178,12 +190,28 @@ namespace rad
             UInt64 sum = 0UL;
             foreach(List<MutableKeyValuePair<int, int>> lst in hashTable.hashT){
                 foreach(MutableKeyValuePair<int,int> pair in lst){
-                    Console.WriteLine(pair.Value);
                     sum += (ulong) Math.Pow(pair.Value, 2);
                 }
             }
 
             Console.WriteLine("S is:" + sum);
+        }
+
+        static void WriteToCSV<T>(List<T> list, string filename) 
+        {
+            List<string> linesList = new List<string>();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var _string = "{0},{1}";
+                var _formatted = string.Format(_string, (i+1).ToString(), list[i].ToString());
+                linesList.Add(_formatted);
+            }
+
+            string[] linesArray = linesList.ToArray();
+
+            string path = filename;
+            System.IO.File.WriteAllLines(@path, linesArray);
         }
     }
 }
