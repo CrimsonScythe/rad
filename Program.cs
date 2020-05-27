@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 // NOTE RUN WITH the command (100000 values to be generated where all (100000) are distinct):
 // dotnet run 100000 100000
@@ -61,26 +62,54 @@ namespace rad
             // the value S is in reality just the number of items in the data stream
             int S = n;
 
+            List<double> estimatesUnsorted = new List<double>();
+            List<double> estimatesSorted;
+            
             for (int i = 0; i < 100; i++){
                 // i    = 0,1,2,3...
                 // index= 0,4,8,12
                 index = i*4;
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
+                // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
                 double estimate = Algorithms.CountSketch(stream, epsilon, index);
-                Console.WriteLine(estimate);
+                estimatesUnsorted.Add(estimate);
+                //Console.WriteLine(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);
                 // we also compute the mean
                 mean += estimate;
             }
-
+            
+            estimatesSorted = new List<double>(estimatesUnsorted);
+            estimatesSorted.Sort();
+            
+            /*
+             * OUTPUT ESTIMATES TO CSV FILE
+             */
+            WriteToCSV(estimatesUnsorted, "estimates_unsorted.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted.csv");
+            /*
+             * 
+             */
+            
             // we compute the mean-square error
             MSE = MSE/100;
             // so that MSE is the correct variance? page. 6 implementeringsopgave
             Console.WriteLine("mean-squared error:" + MSE);
             mean /= 100;
             Console.WriteLine("mean:" + mean);
-
+            
+            
+            /*
+             * CALCULATE MEDIAN AND OUTPUT TO CSV FILE
+             */
+            List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i - 4) % 10 == 0));
+            
+            WriteToCSV(M, "medians.csv");
+            
+            /*
+             * 
+             */
         }
 
         static void Exercise6(Int32 n, Int32 l)
@@ -167,6 +196,23 @@ namespace rad
             }
 
             Console.WriteLine("S is:" + sum);
+        }
+
+        static void WriteToCSV<T>(List<T> list, string filename) 
+        {
+            List<string> linesList = new List<string>();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var _string = "{0},{1}";
+                var _formatted = string.Format(_string, (i+1).ToString(), list[i].ToString());
+                linesList.Add(_formatted);
+            }
+
+            string[] linesArray = linesList.ToArray();
+
+            string path = filename;
+            System.IO.File.WriteAllLines(@path, linesArray);
         }
     }
 }
