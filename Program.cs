@@ -178,8 +178,8 @@ namespace rad
             UInt64 sum = 0UL;
             foreach(List<MutableKeyValuePair<int, int>> lst in hashTable.hashT){
                 foreach(MutableKeyValuePair<int,int> pair in lst){
-                    Console.WriteLine(pair.Key);
-                    sum += (ulong) Math.Pow(pair.Key, 2);
+                    Console.WriteLine(pair.Value);
+                    sum += (ulong) Math.Pow(pair.Value, 2);
                 }
             }
 
