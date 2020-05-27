@@ -131,7 +131,7 @@ namespace rad{
         ///            4-universal hash function to use (e.g. algorithm 1), 
         ///            which itself takes a UInt64 key and returns hash value
         /// </param>
-        public static (UInt64, UInt64) Algorithm2(UInt64 x, Func<UInt64, int, UInt64> g, int index, int t) {
+        public static (Int64, Int64) Algorithm2(UInt64 x, Func<UInt64, int, UInt64> g, int index, int t) {
             /*
             QUESTIONS WE NEED ANSWERING:
             - what should we put t to be? 
@@ -139,20 +139,20 @@ namespace rad{
             - if k, what is k? Is it equal to t? 
             */
             
-            UInt64 m = (UInt64)(Math.Pow(2, t));
+            Int64 m = (Int64)(Math.Pow(2, t));
             
             // b is set to 89 bits according to p. 5 of "Implementeringsprojekt.pdf"
             // as 2^(89)-1 creates a Mersenne prime number. 
             int b = 89;
 
-            UInt64 gx = g(x, index);
+            Int64 gx = (Int64) g(x, index);
             // Should it be m or k that's used here? In the notes, they use k.
             // If k, what should the value of k be? 4? 64? Anything <=64? Or t?
             // As t is used in calculating m, according to task 6 description, p. 5. 
             // Assume for now, m
-            UInt64 hx = gx&((ulong)m-1);
-            UInt64 bx = gx >> (b-1);
-            UInt64 sx = 1 - 2*bx;
+            Int64 hx = gx&((long)m-1);
+            Int64 bx = gx >> (b-1);
+            Int64 sx = 1 - 2*bx;
 
             return(hx, sx);
         }
@@ -182,15 +182,15 @@ namespace rad{
 
             // //// BCS-INITIALIZE part ////
             
-            UInt64 k = (UInt64) Math.Ceiling(8/Math.Pow(epsilon, 2));
+            Int64 k = (Int64) Math.Ceiling(8/Math.Pow(epsilon, 2));
             
             // // Pick 4-universal s and h 
             // // (these are set by algorithm2 and can't be picked)
 
             // // C[0, ..., k-1] <-- 0
-            List<UInt64> C = new List<UInt64>();
-            for (UInt64 i = 0; i < k; i++) {
-                C.Add(0U);
+            List<Int64> C = new List<Int64>();
+            for (Int64 i = 0; i < k; i++) {
+                C.Add(0);
             }
             
             // //// BCS-PROCESS part ////-
@@ -204,7 +204,7 @@ namespace rad{
                 // placeholder value for delta, do change.
                 
                 // delta is the data portion of the stream. So pair.Item2
-                var delta = (ulong) pair.Item2;
+                var delta = (long) pair.Item2;
                 C[(int) hx] = C[(int) hx] + sx * delta;
             }
             

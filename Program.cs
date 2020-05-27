@@ -45,6 +45,7 @@ namespace rad
                 
             int n = 10000;
             int l = 25;
+            // var epsilon = 0.01;
             var epsilon = 0.001;
             // var epsilon = 0.0003;
 
