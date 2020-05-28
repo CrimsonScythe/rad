@@ -103,8 +103,8 @@ namespace rad
             /*
              * CALCULATE MEDIAN AND OUTPUT TO CSV FILE
              */
-            List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i - 4) % 10 == 0));
-            
+            List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i + 6) % 11 == 0));
+            M.Sort();
             WriteToCSV(M, "medians.csv");
             
             /*
