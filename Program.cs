@@ -49,7 +49,7 @@ namespace rad
             /*
              * Show that we have implemented hashtabel with chaining and that it supports get, set and increment.
              */
-            HashTable hashTable = new HashTable();
+            HashTable hashTable = new HashTable(25, HashFuncType.mod);
             Console.WriteLine(hashTable.get(5));
             hashTable.set(5,10);
             Console.WriteLine(hashTable.get(5));
