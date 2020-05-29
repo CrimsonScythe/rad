@@ -31,6 +31,8 @@ namespace rad
 
             // Exercise1(Int32.Parse(args[0]), Int32.Parse(args[1]));
 
+            // Exercise2();
+            
             // Exercise3(HashFuncType.mod);
 
             // Exercise6(1000, 20);
@@ -39,7 +41,50 @@ namespace rad
             int l = 25;
             var stream = Generator.CreateStream(n,l);
             Exercise7(stream, n, l);
+            Exercise8(stream, n, l);
         }
+
+        static void Exercise2()
+        {
+            /*
+             * Show that we have implemented hashtabel with chaining and that it supports get, set and increment.
+             */
+            HashTable hashTable = new HashTable();
+            Console.WriteLine(hashTable.get(5));
+            hashTable.set(5,10);
+            Console.WriteLine(hashTable.get(5));
+            hashTable.increment(5, 1);
+            Console.WriteLine(hashTable.get(5));
+        }
+        static void Exercise8(IEnumerable<Tuple<ulong , int>> stream, int n, int l)
+        {
+            var epsilon = 0.001;
+            int t = (int) Math.Log2(4/(Math.Pow(epsilon, 2)));
+            var answers = PerformCountSketch(stream, n, l, t);
+            var estimatesSorted = new List<double>(answers.estimatesUnsorted);
+            estimatesSorted.Sort();
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_4.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_4.csv");
+            WriteToCSV(answers.medians, "medians_4.csv");
+            
+            t = (int) Math.Log2(2/(Math.Pow(epsilon, 2)));
+            answers = PerformCountSketch(stream, n, l, t);
+            estimatesSorted = new List<double>(answers.estimatesUnsorted);
+            estimatesSorted.Sort();
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_2.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_2.csv");
+            WriteToCSV(answers.medians, "medians_2.csv");
+            
+            epsilon = 0.001;
+            t = (int) Math.Log2(1/(Math.Pow(epsilon, 2)));
+            answers = PerformCountSketch(stream, n, l, t);
+            estimatesSorted = new List<double>(answers.estimatesUnsorted);
+            estimatesSorted.Sort();
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_1.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_1.csv");
+            WriteToCSV(answers.medians, "medians_1.csv");
+        }
+
 
         static void Exercise7(IEnumerable<Tuple<ulong , int>> stream, int n, int l)
         {
