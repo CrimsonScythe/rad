@@ -155,11 +155,11 @@ namespace rad{
         /// <param name="epsilon">error factor (according to web)</param>
         /// <param name="index">this ensures that the random bytes used are unique in each call to CountSketch.
         /// This should start from 0 and be incremented by 4 everytime. i.e: 0,4,8</param>
-        public static UInt64 CountSketch(IEnumerable<Tuple<ulong , int>> stream, double epsilon, int index) {
+        public static UInt64 CountSketch(IEnumerable<Tuple<ulong , int>> stream, double epsilon, int index, int t) {
             // compute t
             // 2^t = 8/epsilon^2
             // t = log_{2}(8/epsilon^2)
-            int t = (int) Math.Log2(8/(Math.Pow(epsilon, 2)));
+            
 
             // //// BCS-INITIALIZE part ////
             
