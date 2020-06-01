@@ -84,8 +84,17 @@ namespace rad{
                 01011100 00010110 11101001 00111000 10101010 00001100 01000011 00100001 11001011 00010111 11101110 0
                 01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
             */
+
             
-            UInt64 p = (UInt64)(Math.Pow(2, 89)-1);
+            // UInt64 p = (UInt64)(Math.Pow(2, 89)-1);
+            double p1 = (Math.Pow(2, 89)-1);
+            BigInteger p = new BigInteger(p1);
+            // UInt64 p = 
+            if (p!=0){
+            // Console.WriteLine(1);
+            // Console.WriteLine(p);
+            }
+
             int b = 89;
             List<BigInteger> a = new List<BigInteger>();
             
@@ -107,17 +116,27 @@ namespace rad{
             
             
             int q = a.Capacity;
+
+            BigInteger xB = new BigInteger(x);
+            // BigInteger pB = new BigInteger(p);
+            // BigInteger bB = new BigInteger(b);
             
             BigInteger y = a[q-1];
             for(int i = q-2; i > 0; i--) {
-                y = y*x+a[i];
-                y = (y&p) + (y>>b);
+                y = (y*x)+a[i];
+                // Console.WriteLine(y);
+                y = (y&p) + (y >> b);
+                            // Console.WriteLine(y);
+
             }
+            // Console.WriteLine(y);
+            // Console.WriteLine((Int64)p);
             if (y >= p){
                 y = y - p;
             }
             // Console.WriteLine(y);
-            return (UInt64) y;
+            // Console.WriteLine((UInt64)y);
+            return (UInt64)y;
         }
         
         /// <summary>
@@ -140,9 +159,14 @@ namespace rad{
             int b = 89;
 
             Int64 gx = (Int64) g(x, index);
+            // Console.WriteLine("gx:" + gx);
             Int64 hx = gx&((long)m-1);
+            // Console.WriteLine("hx:" + hx);
             Int64 bx = gx >> (b-1);
+            // Console.WriteLine("bx:" + bx);
             Int64 sx = 1 - 2*bx;
+            // Console.WriteLine("sx:" + sx);
+            // Console.WriteLine();
 
             return(hx, sx);
         }
@@ -165,7 +189,8 @@ namespace rad{
             
             //Int64 k = (Int64) Math.Ceiling(8/Math.Pow(epsilon, 2));
             Int64 m = (Int64) Math.Ceiling(Math.Pow(2, t));
-    
+            
+
             // // C[0, ..., k-1] <-- 0
             List<Int64> C = new List<Int64>();
             for (Int64 i = 0; i < m; i++) {
