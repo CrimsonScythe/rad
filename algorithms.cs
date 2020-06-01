@@ -118,15 +118,17 @@ namespace rad{
             int q = a.Capacity;
 
             BigInteger xB = new BigInteger(x);
+            // Console.WriteLine(xB);
             // BigInteger pB = new BigInteger(p);
             // BigInteger bB = new BigInteger(b);
-            
+            BigInteger sy = new BigInteger(0);
             BigInteger y = a[q-1];
             for(int i = q-2; i > 0; i--) {
-                y = (y*x)+a[i];
-                // Console.WriteLine(y);
-                y = (y&p) + (y >> b);
-                            // Console.WriteLine(y);
+
+                y = (y*xB)+a[i];         
+                y = (y&p) + y >> b;    
+
+               
 
             }
             // Console.WriteLine(y);
@@ -135,7 +137,7 @@ namespace rad{
                 y = y - p;
             }
             // Console.WriteLine(y);
-            // Console.WriteLine((UInt64)y);
+            // Console.WriteLine((Int64)y);
             return (UInt64)y;
         }
         
