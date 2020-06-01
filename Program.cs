@@ -39,10 +39,10 @@ namespace rad
 
             // Exercise6(1000, 20);
             
-            var stream1 = Generator.CreateStream(10000,25);
-            AnnouncementPart1(stream1);
+            // var stream1 = Generator.CreateStream(10000,25);
+            // AnnouncementPart1(stream1);
 
-            var stream2 = Generator.CreateStream(100000,12);
+            var stream2 = Generator.CreateStream(10000, 25);
             AnnouncementPart2(stream2);
         }
 
@@ -108,7 +108,6 @@ namespace rad
             Console.WriteLine();
 
             watch.Restart();
-            watch.Start();
             estimate = Algorithms.CountSketch(stream, epsilon, 4, 7);
             watch.Stop();
             Console.WriteLine("[CountSketch]\nl=25, m=128, t=7");
@@ -117,7 +116,6 @@ namespace rad
             Console.WriteLine();
 
             watch.Restart();
-            watch.Start();
             estimate = Algorithms.CountSketch(stream, epsilon, 8, 10);
             watch.Stop();
             Console.WriteLine("[CountSketch]\nl=25, m=1024, t=10");
@@ -128,6 +126,7 @@ namespace rad
         
         static void AnnouncementPart2(IEnumerable<Tuple<ulong , int>> stream)
         {
+
             var answers = PerformCountSketch(stream, 4);
             var estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
@@ -142,7 +141,7 @@ namespace rad
             WriteToCSV(estimatesSorted, "estimates_sorted_m128.csv");
             WriteToCSV(answers.medians, "medians_m128.csv");
             
-            answers = PerformCountSketch(stream, 10);
+            answers = PerformCountSketch(stream, 21);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
             WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m1024.csv");
@@ -151,7 +150,7 @@ namespace rad
         }
         static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int t) {
             var epsilon = 0.001;
-            var l = 12;
+            var l = 25;
             
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
@@ -161,7 +160,8 @@ namespace rad
             double MSE=0;
             double mean=0;
             // the value S is in reality just the number of items in the data stream
-            int S = 1000000;
+            int S = 10000;
+            t=22;
             
             List<double> estimatesUnsorted = new List<double>();
 
@@ -172,6 +172,7 @@ namespace rad
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
                 // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
                 double estimate = Algorithms.CountSketch(stream, epsilon, index, t);
+                Console.WriteLine(estimate);
                 estimatesUnsorted.Add(estimate);
                 //Console.WriteLine(estimate);
                 // we compute the mean-square error
