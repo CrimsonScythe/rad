@@ -163,12 +163,12 @@ namespace rad{
 
             // //// BCS-INITIALIZE part ////
             
-            Int64 k = (Int64) Math.Ceiling(8/Math.Pow(epsilon, 2));
-            
-
+            //Int64 k = (Int64) Math.Ceiling(8/Math.Pow(epsilon, 2));
+            Int64 m = (Int64) Math.Ceiling(Math.Pow(2, t));
+    
             // // C[0, ..., k-1] <-- 0
             List<Int64> C = new List<Int64>();
-            for (Int64 i = 0; i < k; i++) {
+            for (Int64 i = 0; i < m; i++) {
                 C.Add(0);
             }
             
@@ -189,7 +189,7 @@ namespace rad{
             UInt64 secondMoment = 0;
 
             
-            for (int i = 0; i < (int)k; i++)
+            for (int i = 0; i < (int)m; i++)
             {
                 secondMoment = secondMoment + (UInt64) Math.Pow(C[i], 2);
             }

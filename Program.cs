@@ -28,8 +28,10 @@ namespace rad
             // Console.WriteLine(hashTable.get(5));
 
             
-
-            // Exercise1(Int32.Parse(args[0]), Int32.Parse(args[1]));
+            var stream = Generator.CreateStream(50000, 25);
+            // testing the running times
+            Exercise1(stream, 25);
+            Exercise4(stream);
 
             // Exercise2();
             
@@ -37,11 +39,14 @@ namespace rad
 
             // Exercise6(1000, 20);
             
-            int n = 10000;
-            int l = 25;
-            var stream = Generator.CreateStream(n,l);
-            Exercise7(stream, n, l);
-            Exercise8(stream, n, l);
+            var stream1 = Generator.CreateStream(10000,25);
+            AnnouncementPart1(stream1);
+
+            var stream2 = Generator.CreateStream(100000,12);
+            AnnouncementPart2(stream2);
+
+
+
         }
 
         static void Exercise2()
@@ -56,49 +61,92 @@ namespace rad
             hashTable.increment(5, 1);
             Console.WriteLine(hashTable.get(5));
         }
-        static void Exercise8(IEnumerable<Tuple<ulong , int>> stream, int n, int l)
+        static void AnnouncementPart2(IEnumerable<Tuple<ulong , int>> stream)
         {
-            var epsilon = 0.001;
-            int t = (int) Math.Log2(4/(Math.Pow(epsilon, 2)));
-            var answers = PerformCountSketch(stream, n, l, t);
+            var answers = PerformCountSketch(stream, 4);
             var estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
-            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_4.csv");
-            WriteToCSV(estimatesSorted, "estimates_sorted_4.csv");
-            WriteToCSV(answers.medians, "medians_4.csv");
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m16.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_m16.csv");
+            WriteToCSV(answers.medians, "medians_m16.csv");
             
             t = (int) Math.Log2(2/(Math.Pow(epsilon, 2)));
-            answers = PerformCountSketch(stream, n, l, t);
+            answers = PerformCountSketch(stream, 7);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
-            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_2.csv");
-            WriteToCSV(estimatesSorted, "estimates_sorted_2.csv");
-            WriteToCSV(answers.medians, "medians_2.csv");
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m128.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_m128.csv");
+            WriteToCSV(answers.medians, "medians_m128.csv");
             
             epsilon = 0.001;
             t = (int) Math.Log2(1/(Math.Pow(epsilon, 2)));
-            answers = PerformCountSketch(stream, n, l, t);
+            answers = PerformCountSketch(stream, 10);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
-            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_1.csv");
-            WriteToCSV(estimatesSorted, "estimates_sorted_1.csv");
-            WriteToCSV(answers.medians, "medians_1.csv");
+            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m1024.csv");
+            WriteToCSV(estimatesSorted, "estimates_sorted_m1024.csv");
+            WriteToCSV(answers.medians, "medians_m1024.csv");
         }
 
 
-        static void Exercise7(IEnumerable<Tuple<ulong , int>> stream, int n, int l)
+        static void AnnouncementPart1(IEnumerable<Tuple<ulong , int>> stream)
         {
+            // HERE WE RUN 3 EXPERIMENTS WITH l = 25, and m=16, m=128, m=1024. 
             var epsilon = 0.001;
-            int t = (int) Math.Log2(8/(Math.Pow(epsilon, 2)));
-            var answers = PerformCountSketch(stream, n, l, t);
-            var estimatesSorted = new List<double>(answers.estimatesUnsorted);
-            estimatesSorted.Sort();
-            WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted.csv");
-            WriteToCSV(estimatesSorted, "estimates_sorted.csv");
-            WriteToCSV(answers.medians, "medians.csv");
+            //int t = (int) Math.Log2(8/(Math.Pow(epsilon, 2))); 
+
+            // EXPERIMENT 1, l = 25, m = 16, therefore t=4
+            BigInteger sum = new BigInteger(0);
+            var watch = Stopwatch.StartNew();
+    
+            foreach (Tuple<ulong, int> item in stream)
+            {
+                sum = HashFunctions.multiplyShift(item.Item1, l) + sum;     
+            }
+            
+            watch.Stop();
+
+            Console.WriteLine("MultiplyShift sum:" + sum);
+            Console.WriteLine("MultiplyShift elapsed:" + watch.ElapsedMilliseconds);
+
+            sum=0;            
+
+            watch.Restart();
+            foreach (Tuple<ulong, int> item in stream)
+            {
+                sum = HashFunctions.multiplyMod(item.Item1, l) + sum;     
+            }
+            watch.Stop();
+            Console.WriteLine("MultiplyMod sum:" + sum);
+            Console.WriteLine("MultiplyMod elapsed:" + watch.ElapsedMilliseconds);
+
+
+            watch.Restart()
+            double estimate = Algorithms.CountSketch(stream, epsilon, 0, t)
+            watch.Stop()
+            Console.WriteLine("[Experiment 1][l=25, m=16, t=4]")
+            Console.WriteLine("Estimate:" + estimate)
+            Console.WriteLine("Elapsed time:" + watch.ElapsedMilliseconds)
+
+            watch.Restart()
+            watch.Start()
+            double estimate = Algorithms.CountSketch(stream, epsilon, 4, t)
+            watch.Stop()
+            Console.WriteLine("[Experiment 2][l=25, m=128, t=7]")
+            Console.WriteLine("Estimate:" + estimate)
+            Console.WriteLine("Elapsed time:" + watch.ElapsedMilliseconds)
+
+            watch.Restart()
+            watch.Start()
+            double estimate = Algorithms.CountSketch(stream, epsilon, 8, t)
+            watch.Stop()
+            Console.WriteLine("[Experiment 3][l=25, m=1024, t=10]")
+            Console.WriteLine("Estimate:" + estimate)
+            Console.WriteLine("Elapsed time:" + watch.ElapsedMilliseconds)
         }
-        static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int n, int l, int t) {
+        static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int t) {
             var epsilon = 0.001;
+            var l = 12;
             
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
@@ -169,11 +217,26 @@ namespace rad
             
             
         }
+        // Test the runtime of Algorithm1 which is actually the 4-universal hash function.
+        // In the report, we compare the runtime against mod-prime and multiply-shift from exercise 1.
+        static void Exercise4(IEnumerable<Tuple<ulong, int>> stream) {
+            // index is just the random seed - we set it to 1
+            
+            UInt64 sum = 0;
+            var watch = Stopwatch.StartNew();
+            
+            foreach(Tuple<ulong, int> item in stream){
+                sum += Algorithms.Algorithm1(item.Item1, 0);
+            }
 
-        static void Exercise1(Int32 n, Int32 l) {
+            watch.Stop();
 
+            Console.WriteLine("4-universal hash function sum:" + sum);
+            Console.WriteLine("4-universal hash function elapsed:" + watch.ElapsedMilliseconds);
 
-            IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(n, l);
+        }
+
+        static void Exercise1(IEnumerable<Tuple<ulong, int>> stream, Int32 l) { 
 
             BigInteger sum = new BigInteger(0);
 
