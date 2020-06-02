@@ -231,7 +231,8 @@ namespace rad
             var watch = Stopwatch.StartNew();
             
             foreach(Tuple<ulong, int> item in stream){
-                sum += Algorithms.Algorithm1(item.Item1, 0);
+                // DOESNT WORK WITH NEW random indexing yet
+                //sum += Algorithms.Algorithm1(item.Item1, );
             }
 
             watch.Stop();

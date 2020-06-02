@@ -9,8 +9,8 @@ namespace rad{
     class Algorithms
     {
         
-        //public static RandomBytes randomBytes = new RandomBytes(System.IO.File.ReadAllText("randombytes.txt"));
-        //public static IEnumerator randomBytesEnum = randomBytes.GetEnumerator();
+        public static RandomBytes randomBytes = new RandomBytes(System.IO.File.ReadAllText("randombytes.txt"));
+        public static IEnumerator randomBytesEnum = randomBytes.GetEnumerator();
         
         public static byte[] GetBytes(string bitString) {
     return Enumerable.Range(0, bitString.Length/8).
@@ -31,7 +31,7 @@ namespace rad{
          /// </returns>
          ///
 
-        
+        /*
         public static (BigInteger, BigInteger, BigInteger, BigInteger) randomBytes(int index) {
             // make sure index argument increases in 4s like so: 0, 4, 8..
             // we get a reference to the string. This is so we don't have to read the .txt everytime
@@ -69,7 +69,7 @@ namespace rad{
            
             return (byte0, byte1, byte2, byte3);
         }
-        
+        */
         
         public static string BinToDec(string value)
         {
@@ -96,7 +96,7 @@ namespace rad{
          ///   Returns hashed value
          /// </returns>
          ///
-        public static BigInteger Algorithm1(UInt64 x, int index) {
+        public static BigInteger Algorithm1(UInt64 x, List<BigInteger> a) {
             /*
                 To get the a's which must be random in [p], we use random.org/bytes
                 a need to be 89 bits long each, so we generate a 12 byte number and throw away the first 7 bits to get 89 bits
@@ -110,8 +110,7 @@ namespace rad{
             BigInteger p = new BigInteger(Math.Pow(2, 89)) - 1;
             
             int b = 89;
-            List<BigInteger> a = new List<BigInteger>();
-            
+
             // we get random bytes correspding to the current index.
             // the idea is that the index will change on each successive call to 
             // Algorithm1 so we get completely *new* random bytes everytime
@@ -125,32 +124,11 @@ namespace rad{
             a.Add(tuple.Item3);
             a.Add(tuple.Item4);
             */
-            
+            /*
             a.Add(BigInteger.Parse("193790846148879967259151967"));	  
             a.Add(BigInteger.Parse("193790846148879967259151967"));
             a.Add(BigInteger.Parse("193790846148879967259151967"));       
             a.Add(BigInteger.Parse("193790846148879967259151967"));	  	      
-            
-            /*
-            //Console.WriteLine("1");
-            randomBytesEnum.MoveNext();
-            string bitsString = (string) randomBytesEnum.Current;
-            a.Add(BigInteger.Parse(BinToDec(bitsString)));
-            
-            //Console.WriteLine("2");
-            randomBytesEnum.MoveNext();
-            bitsString = (string) randomBytesEnum.Current;
-            a.Add(BigInteger.Parse(BinToDec(bitsString)));
-            
-            //Console.WriteLine("3");
-            randomBytesEnum.MoveNext();
-            bitsString = (string) randomBytesEnum.Current;
-            a.Add(BigInteger.Parse(BinToDec(bitsString)));
-            
-            //Console.WriteLine("4");
-            randomBytesEnum.MoveNext();
-            bitsString = (string) randomBytesEnum.Current;
-            a.Add(BigInteger.Parse(BinToDec(bitsString)));
             */
             
             int q = a.Capacity;
@@ -182,7 +160,7 @@ namespace rad{
         ///            4-universal hash function to use (e.g. algorithm 1), 
         ///            which itself takes a UInt64 key and returns hash value
         /// </param>
-        public static (Int64, Int64) Algorithm2(UInt64 x, Func<UInt64, int, BigInteger> g, int index, int t)
+        public static (Int64, Int64) Algorithm2(UInt64 x, Func<UInt64, List<BigInteger>, BigInteger> g, List<BigInteger> a, int t)
         {
 
 
@@ -192,7 +170,7 @@ namespace rad{
             // as 2^(89)-1 creates a Mersenne prime number. 
             int b = 89;
 
-            BigInteger gx = g(x, index);
+            BigInteger gx = g(x, a);
             // Console.WriteLine("gx:" + gx);
             BigInteger hx = gx&(m-1);
             // Console.WriteLine("hx:" + hx);
@@ -222,6 +200,24 @@ namespace rad{
             // //// BCS-INITIALIZE part ////
             
             //Int64 k = (Int64) Math.Ceiling(8/Math.Pow(epsilon, 2));
+            
+            List<BigInteger> a = new List<BigInteger>();
+            randomBytesEnum.MoveNext();
+            string bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
             Int64 m = (Int64) Math.Ceiling(Math.Pow(2, t));
             
 
@@ -234,7 +230,7 @@ namespace rad{
             // //// BCS-PROCESS part ////-
             foreach (Tuple<ulong, int> pair in stream)
             {
-                var hashValues = Algorithm2(pair.Item1, Algorithm1,index, t);
+                var hashValues = Algorithm2(pair.Item1, Algorithm1, a, t);
                 var hx = hashValues.Item1;
                 var sx = hashValues.Item2;
                 

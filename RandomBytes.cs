@@ -69,7 +69,7 @@ namespace rad
             {
                 try
                 {
-                    Console.WriteLine(position + " / " + _bytes.Length);
+                    //Console.WriteLine(position + " / " + _bytes.Length);
                     string byteString = _bytes.Substring(position, 90);
                     return byteString;
                 }
