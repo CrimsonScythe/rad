@@ -87,15 +87,16 @@ namespace rad{
 
             
             // UInt64 p = (UInt64)(Math.Pow(2, 89)-1);
-            double p1 = (Math.Pow(2, 89)-1);
-            BigInteger p = new BigInteger(p1);
+            double p1 = Math.Pow(2, 61);
+            BigInteger p = new BigInteger(p1) - 1;
+
             // UInt64 p = 
             if (p!=0){
             // Console.WriteLine(1);
             // Console.WriteLine(p);
             }
 
-            int b = 89;
+            int b = 61;
             List<BigInteger> a = new List<BigInteger>();
             
             // we get random bytes correspding to the current index.
@@ -118,26 +119,26 @@ namespace rad{
             int q = a.Capacity;
 
             BigInteger xB = new BigInteger(x);
-            // Console.WriteLine(xB);
-            // BigInteger pB = new BigInteger(p);
-            // BigInteger bB = new BigInteger(b);
-            BigInteger sy = new BigInteger(0);
+            
             BigInteger y = a[q-1];
-            for(int i = q-2; i > 0; i--) {
+            BigInteger ytemp = new BigInteger(0);
+            for(int i = q-2; i >= 0; i--) {
+
 
                 y = (y*xB)+a[i];         
-                y = (y&p) + y >> b;    
-
-               
+                y = (y&p) + (y >> b);    
 
             }
             // Console.WriteLine(y);
             // Console.WriteLine((Int64)p);
             if (y >= p){
+                // Console.WriteLine("yes");
                 y = y - p;
             }
+          
+            // Console.WriteLine(p);
             // Console.WriteLine(y);
-            // Console.WriteLine((Int64)y);
+
             return (UInt64)y;
         }
         
@@ -158,7 +159,7 @@ namespace rad{
             
             // b is set to 89 bits according to p. 5 of "Implementeringsprojekt.pdf"
             // as 2^(89)-1 creates a Mersenne prime number. 
-            int b = 89;
+            int b = 61;
 
             Int64 gx = (Int64) g(x, index);
             // Console.WriteLine("gx:" + gx);

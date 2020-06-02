@@ -42,7 +42,7 @@ namespace rad
             // var stream1 = Generator.CreateStream(10000,25);
             // AnnouncementPart1(stream1);
 
-            var stream2 = Generator.CreateStream(10000, 25);
+            var stream2 = Generator.CreateStream(100000, 12);
             AnnouncementPart2(stream2);
         }
 
@@ -150,7 +150,7 @@ namespace rad
         }
         static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int t) {
             var epsilon = 0.001;
-            var l = 25;
+            var l = 12;
             
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
@@ -160,9 +160,9 @@ namespace rad
             double MSE=0;
             double mean=0;
             // the value S is in reality just the number of items in the data stream
-            int S = 10000;
-            t=22;
-            
+            int S = 100000;
+            t=10;
+           
             List<double> estimatesUnsorted = new List<double>();
 
             for (int i = 0; i < 100; i++){
@@ -227,7 +227,7 @@ namespace rad
         static void Exercise4(IEnumerable<Tuple<ulong, int>> stream) {
             // index is just the random seed - we set it to 1
             
-            UInt64 sum = 0;
+            double sum = 0;
             var watch = Stopwatch.StartNew();
             
             foreach(Tuple<ulong, int> item in stream){
