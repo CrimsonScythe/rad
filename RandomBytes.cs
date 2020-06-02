@@ -62,24 +62,16 @@ namespace rad
                 return Current;
             }
         }
-
-        public static byte[] GetBytes(string bitString)
-        {
-            return Enumerable.Range(0, bitString.Length / 8).Select(pos => Convert.ToByte(
-                bitString.Substring(pos * 8, 8),
-                2)
-            ).ToArray();
-        }
-
-        public BigInteger Current
+        
+        public string Current
         {
             get
             {
                 try
                 {
+                    Console.WriteLine(position + " / " + _bytes.Length);
                     string byteString = _bytes.Substring(position, 90);
-                    var _byte = new BigInteger(GetBytes(byteString).Concat(new byte[]{0}).ToArray());
-                    return _byte;
+                    return byteString;
                 }
                 catch (IndexOutOfRangeException)
                 {
