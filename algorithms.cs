@@ -1,12 +1,17 @@
 using System.Numerics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace rad{
-    class Algorithms{
-
+    class Algorithms
+    {
+        
+        //public static RandomBytes randomBytes = new RandomBytes(System.IO.File.ReadAllText("randombytes.txt"));
+        //public static IEnumerator randomBytesEnum = randomBytes.GetEnumerator();
+        
         public static byte[] GetBytes(string bitString) {
     return Enumerable.Range(0, bitString.Length/8).
         Select(pos => Convert.ToByte(
@@ -26,6 +31,7 @@ namespace rad{
          /// </returns>
          ///
 
+        
         public static (BigInteger, BigInteger, BigInteger, BigInteger) randomBytes(int index) {
             // make sure index argument increases in 4s like so: 0, 4, 8..
             // we get a reference to the string. This is so we don't have to read the .txt everytime
@@ -62,7 +68,22 @@ namespace rad{
             // var byte3 = new BigInteger(Encoding.ASCII.GetBytes(splitted4));
            
             return (byte0, byte1, byte2, byte3);
-            
+        }
+        
+        
+        public static string BinToDec(string value)
+        {
+            // BigInteger can be found in the System.Numerics dll
+            BigInteger res = 0;
+
+            // I'm totally skipping error handling here
+            foreach(char c in value)
+            {
+                res <<= 1;
+                res += c == '1' ? 1 : 0;
+            }
+
+            return res.ToString();
         }
         
          /// <summary>
@@ -75,7 +96,7 @@ namespace rad{
          ///   Returns hashed value
          /// </returns>
          ///
-        public static UInt64 Algorithm1(UInt64 x, int index) {
+        public static BigInteger Algorithm1(UInt64 x, int index) {
             /*
                 To get the a's which must be random in [p], we use random.org/bytes
                 a need to be 89 bits long each, so we generate a 12 byte number and throw away the first 7 bits to get 89 bits
@@ -84,18 +105,10 @@ namespace rad{
                 01011100 00010110 11101001 00111000 10101010 00001100 01000011 00100001 11001011 00010111 11101110 0
                 01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
             */
-
             
             // UInt64 p = (UInt64)(Math.Pow(2, 89)-1);
-            double p1 = Math.Pow(2, 61);
-            BigInteger p = new BigInteger(p1) - 1;
-
-            // UInt64 p = 
-            if (p!=0){
-            // Console.WriteLine(1);
-            // Console.WriteLine(p);
-            }
-
+            BigInteger p = new BigInteger(Math.Pow(2, 89)) - 1;
+            
             int b = 89;
             List<BigInteger> a = new List<BigInteger>();
             
@@ -112,24 +125,40 @@ namespace rad{
             a.Add(tuple.Item3);
             a.Add(tuple.Item4);
             */
-            a.Add(BigInteger.Parse("460055437480792894556986118"));
-            a.Add(BigInteger.Parse("421326039502587756936392441"));	          
-            a.Add(BigInteger.Parse("222658739283255370454544348"));	      
-            a.Add(BigInteger.Parse("193790846148879967259151967"));	    
             
+            a.Add(BigInteger.Parse("193790846148879967259151967"));	  
+            a.Add(BigInteger.Parse("193790846148879967259151967"));
+            a.Add(BigInteger.Parse("193790846148879967259151967"));       
+            a.Add(BigInteger.Parse("193790846148879967259151967"));	  	      
+            
+            /*
+            //Console.WriteLine("1");
+            randomBytesEnum.MoveNext();
+            string bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            //Console.WriteLine("2");
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            //Console.WriteLine("3");
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            
+            //Console.WriteLine("4");
+            randomBytesEnum.MoveNext();
+            bitsString = (string) randomBytesEnum.Current;
+            a.Add(BigInteger.Parse(BinToDec(bitsString)));
+            */
             
             int q = a.Capacity;
-
-            BigInteger xB = new BigInteger(x);
-            
+            // -1 because we're 0 indexed
             BigInteger y = a[q-1];
-            BigInteger ytemp = new BigInteger(0);
             for(int i = q-2; i >= 0; i--) {
-
-
-                y = (y*xB)+a[i];         
-                y = (y&p) + (y >> b);    
-
+                y = y*x + a[i];         
+                y = ( y & p ) + ( y >> b );
             }
             // Console.WriteLine(y);
             // Console.WriteLine((Int64)p);
@@ -137,11 +166,10 @@ namespace rad{
                 // Console.WriteLine("yes");
                 y = y - p;
             }
-          
+            
             // Console.WriteLine(p);
             // Console.WriteLine(y);
-
-            return (UInt64)y;
+            return y;
         }
         
         /// <summary>
@@ -154,26 +182,27 @@ namespace rad{
         ///            4-universal hash function to use (e.g. algorithm 1), 
         ///            which itself takes a UInt64 key and returns hash value
         /// </param>
-        public static (Int64, Int64) Algorithm2(UInt64 x, Func<UInt64, int, UInt64> g, int index, int t) {
-           
-            
-            Int64 m = (Int64)(Math.Pow(2, t));
+        public static (Int64, Int64) Algorithm2(UInt64 x, Func<UInt64, int, BigInteger> g, int index, int t)
+        {
+
+
+            BigInteger m = BigInteger.Pow(2, t);
             
             // b is set to 89 bits according to p. 5 of "Implementeringsprojekt.pdf"
             // as 2^(89)-1 creates a Mersenne prime number. 
-            int b = 61;
+            int b = 89;
 
-            Int64 gx = (Int64) g(x, index);
+            BigInteger gx = g(x, index);
             // Console.WriteLine("gx:" + gx);
-            Int64 hx = gx&((long)m-1);
+            BigInteger hx = gx&(m-1);
             // Console.WriteLine("hx:" + hx);
-            Int64 bx = gx >> (b-1);
+            BigInteger bx = gx >> (b-1);
             // Console.WriteLine("bx:" + bx);
-            Int64 sx = 1 - 2*bx;
+            BigInteger sx = 1 - 2*bx;
             // Console.WriteLine("sx:" + sx);
             // Console.WriteLine();
 
-            return(hx, sx);
+            return((Int64) hx, (Int64) sx);
         }
 
         /// <summary>

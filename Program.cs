@@ -227,7 +227,7 @@ namespace rad
         static void Exercise4(IEnumerable<Tuple<ulong, int>> stream) {
             // index is just the random seed - we set it to 1
             
-            double sum = 0;
+            BigInteger sum = 0;
             var watch = Stopwatch.StartNew();
             
             foreach(Tuple<ulong, int> item in stream){
