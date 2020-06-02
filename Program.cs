@@ -39,11 +39,11 @@ namespace rad
 
             // Exercise6(1000, 20);
             
-            var stream1 = Generator.CreateStream(10000,25);
-            AnnouncementPart1(stream1);
+            // var stream1 = Generator.CreateStream(10000,25);
+            // AnnouncementPart1(stream1);
 
-            // var stream2 = Generator.CreateStream(4096, 12);
-            // AnnouncementPart2(stream2);
+            var stream2 = Generator.CreateStream(100000, 12);
+            AnnouncementPart2(stream2);
         }
 
         static void Exercise2()

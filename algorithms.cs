@@ -34,10 +34,10 @@ namespace rad{
             // we simply extract 4 bytes each of length 89.
             // we rely on the fact that index is of the size 0,4,8.. so that everytime this is called
             // we get 4 different substrings
-            var splitted = bytes.Substring(59*indices[0],59);
-            var splitted2 = bytes.Substring(59*indices[1], 59);
-            var splitted3 = bytes.Substring(59*indices[2], 59);
-            var splitted4 = bytes.Substring(59*indices[3], 59);
+            var splitted = bytes.Substring(90*indices[0],90);
+            var splitted2 = bytes.Substring(90*indices[1], 90);
+            var splitted3 = bytes.Substring(90*indices[2], 90);
+            var splitted4 = bytes.Substring(90*indices[3], 90);
 
             
             // convert strings to byte arrays and then create bigints from those
@@ -46,15 +46,15 @@ namespace rad{
             // makes the bigint unsigned otherwise there were problems with overflow
             // when returing y from alg2, as y is UInt64 and the result was -1.
         
-            // var byte0 = new BigInteger(GetBytes(splitted).Concat(new byte[]{0}).ToArray());
-            // var byte1 = new BigInteger(GetBytes(splitted2).Concat(new byte[]{0}).ToArray());
-            // var byte2 = new BigInteger(GetBytes(splitted3).Concat(new byte[]{0}).ToArray());
-            // var byte3 = new BigInteger(GetBytes(splitted4).Concat(new byte[]{0}).ToArray());
+            var byte0 = new BigInteger(GetBytes(splitted).Concat(new byte[]{0}).ToArray());
+            var byte1 = new BigInteger(GetBytes(splitted2).Concat(new byte[]{0}).ToArray());
+            var byte2 = new BigInteger(GetBytes(splitted3).Concat(new byte[]{0}).ToArray());
+            var byte3 = new BigInteger(GetBytes(splitted4).Concat(new byte[]{0}).ToArray());
 
-            var byte0 = new BigInteger(GetBytes(splitted));
-            var byte1 = new BigInteger(GetBytes(splitted2));
-            var byte2 = new BigInteger(GetBytes(splitted3));
-            var byte3 = new BigInteger(GetBytes(splitted4));
+            // var byte0 = new BigInteger(GetBytes(splitted));
+            // var byte1 = new BigInteger(GetBytes(splitted2));
+            // var byte2 = new BigInteger(GetBytes(splitted3));
+            // var byte3 = new BigInteger(GetBytes(splitted4));
 
             
            
@@ -92,7 +92,7 @@ namespace rad{
                 01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
             */
             
-            int b = 61;
+            int b = 89;
             
             double p1 = Math.Pow(2, b);
             BigInteger p = new BigInteger(p1) - 1;
@@ -108,14 +108,14 @@ namespace rad{
             var tuple = randomBytes(index);
             // then we append them to the array
          
-            a.Add(tuple.Item1);
-            a.Add(tuple.Item2);
-            a.Add(tuple.Item3);
-            a.Add(tuple.Item4);
-            // a.Add(BigInteger.Parse("460055437480792894556986118"));
-            // a.Add(BigInteger.Parse("421326039502587756936392441"));	          
-            // a.Add(BigInteger.Parse("222658739283255370454544348"));	      
-            // a.Add(BigInteger.Parse("193790846148879967259151967"));	    
+            // a.Add(tuple.Item1);
+            // a.Add(tuple.Item2);
+            // a.Add(tuple.Item3);
+            // a.Add(tuple.Item4);
+            a.Add(BigInteger.Parse("460055437480792894556986118"));
+            a.Add(BigInteger.Parse("421326039502587756936392441"));	          
+            a.Add(BigInteger.Parse("222658739283255370454544348"));	      
+            a.Add(BigInteger.Parse("193790846148879967259151967"));	    
 
 // p=2305843009213693951
 
@@ -167,7 +167,7 @@ namespace rad{
             
             // b is set to 89 bits according to p. 5 of "Implementeringsprojekt.pdf"
             // as 2^(89)-1 creates a Mersenne prime number. 
-            int b = 61;
+            int b = 89;
 
             Int64 gx = (Int64) g(x, index);
             // Console.WriteLine("gx:" + gx);
