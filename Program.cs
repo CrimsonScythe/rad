@@ -41,9 +41,10 @@ namespace rad
             
             // var stream1 = Generator.CreateStream(10000,25);
             // AnnouncementPart1(stream1);
-
-            var stream2 = Generator.CreateStream(100000, 12);
-            AnnouncementPart2(stream2);
+            
+            int l = 12;
+            var stream2 = Generator.CreateStream(100000, l);
+            AnnouncementPart2(stream2, l);
         }
 
         static void Exercise2()
@@ -124,34 +125,33 @@ namespace rad
             Console.WriteLine();
         }
         
-        static void AnnouncementPart2(IEnumerable<Tuple<ulong , int>> stream)
+        static void AnnouncementPart2(IEnumerable<Tuple<ulong , int>> stream, int l)
         {
 
-            var answers = PerformCountSketch(stream, 4);
+            var answers = PerformCountSketch(stream, 4, l);
             var estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
             WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m16.csv");
             WriteToCSV(estimatesSorted, "estimates_sorted_m16.csv");
             WriteToCSV(answers.medians, "medians_m16.csv");
             
-            answers = PerformCountSketch(stream, 7);
+            answers = PerformCountSketch(stream, 7, l);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
             WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m128.csv");
             WriteToCSV(estimatesSorted, "estimates_sorted_m128.csv");
             WriteToCSV(answers.medians, "medians_m128.csv");
             
-            answers = PerformCountSketch(stream, 21);
+            answers = PerformCountSketch(stream, 10, l);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
             WriteToCSV(answers.estimatesUnsorted, "estimates_unsorted_m1024.csv");
             WriteToCSV(estimatesSorted, "estimates_sorted_m1024.csv");
             WriteToCSV(answers.medians, "medians_m1024.csv");
         }
-        static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int t) {
+        static (List<double> estimatesUnsorted, double MSE, double mean, List<double> medians) PerformCountSketch(IEnumerable<Tuple<ulong , int>> stream, int t, int l) {
             var epsilon = 0.001;
-            var l = 12;
-            
+
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
             SFunc(stream, l, HashFuncType.shift);
@@ -160,7 +160,7 @@ namespace rad
             double MSE=0;
             double mean=0;
             // the value S is in reality just the number of items in the data stream
-            int S = 100000;
+            int S = stream.Count();
             
            
             List<double> estimatesUnsorted = new List<double>();
@@ -172,7 +172,7 @@ namespace rad
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
                 // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
                 double estimate = Algorithms.CountSketch(stream, epsilon, index, t);
-                // Console.WriteLine(estimate);
+                Console.WriteLine(estimate);
                 estimatesUnsorted.Add(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);

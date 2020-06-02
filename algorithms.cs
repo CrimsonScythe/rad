@@ -96,7 +96,7 @@ namespace rad{
             // Console.WriteLine(p);
             }
 
-            int b = 61;
+            int b = 89;
             List<BigInteger> a = new List<BigInteger>();
             
             // we get random bytes correspding to the current index.
@@ -104,16 +104,18 @@ namespace rad{
             // Algorithm1 so we get completely *new* random bytes everytime
             // the bytes are actually in an array so we want to start the index at a new spot everytime.
             // thus the index needs to be incremented by 4 everytime Algorithm1 is called
-            var tuple = randomBytes(index);
+            //var tuple = randomBytes(index);
             // then we append them to the array
+            /*
             a.Add(tuple.Item1);
             a.Add(tuple.Item2);
             a.Add(tuple.Item3);
             a.Add(tuple.Item4);
-            // a.Add(BigInteger.Parse("460055437480792894556986118"));
-            // a.Add(BigInteger.Parse("421326039502587756936392441"));	          
-            // a.Add(BigInteger.Parse("222658739283255370454544348"));	      
-            // a.Add(BigInteger.Parse("193790846148879967259151967"));	    
+            */
+            a.Add(BigInteger.Parse("460055437480792894556986118"));
+            a.Add(BigInteger.Parse("421326039502587756936392441"));	          
+            a.Add(BigInteger.Parse("222658739283255370454544348"));	      
+            a.Add(BigInteger.Parse("193790846148879967259151967"));	    
             
             
             int q = a.Capacity;
