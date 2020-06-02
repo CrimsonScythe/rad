@@ -161,7 +161,7 @@ namespace rad
             double mean=0;
             // the value S is in reality just the number of items in the data stream
             int S = 100000;
-            t=10;
+            
            
             List<double> estimatesUnsorted = new List<double>();
 
