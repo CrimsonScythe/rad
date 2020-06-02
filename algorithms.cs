@@ -34,10 +34,10 @@ namespace rad{
             // we simply extract 4 bytes each of length 89.
             // we rely on the fact that index is of the size 0,4,8.. so that everytime this is called
             // we get 4 different substrings
-            var splitted = bytes.Substring(59*indices[0],59);
-            var splitted2 = bytes.Substring(59*indices[1], 59);
-            var splitted3 = bytes.Substring(59*indices[2], 59);
-            var splitted4 = bytes.Substring(59*indices[3], 59);
+            var splitted = bytes.Substring(90*indices[0],90);
+            var splitted2 = bytes.Substring(90*indices[1], 90);
+            var splitted3 = bytes.Substring(90*indices[2], 90);
+            var splitted4 = bytes.Substring(90*indices[3], 90);
 
             
             // convert strings to byte arrays and then create bigints from those
@@ -46,18 +46,11 @@ namespace rad{
             // makes the bigint unsigned otherwise there were problems with overflow
             // when returing y from alg2, as y is UInt64 and the result was -1.
         
-            // var byte0 = new BigInteger(GetBytes(splitted).Concat(new byte[]{0}).ToArray());
-            // var byte1 = new BigInteger(GetBytes(splitted2).Concat(new byte[]{0}).ToArray());
-            // var byte2 = new BigInteger(GetBytes(splitted3).Concat(new byte[]{0}).ToArray());
-            // var byte3 = new BigInteger(GetBytes(splitted4).Concat(new byte[]{0}).ToArray());
-
-            var byte0 = new BigInteger(GetBytes(splitted));
-            var byte1 = new BigInteger(GetBytes(splitted2));
-            var byte2 = new BigInteger(GetBytes(splitted3));
-            var byte3 = new BigInteger(GetBytes(splitted4));
-
+            var byte0 = new BigInteger(GetBytes(splitted).Concat(new byte[]{0}).ToArray());
+            var byte1 = new BigInteger(GetBytes(splitted2).Concat(new byte[]{0}).ToArray());
+            var byte2 = new BigInteger(GetBytes(splitted3).Concat(new byte[]{0}).ToArray());
+            var byte3 = new BigInteger(GetBytes(splitted4).Concat(new byte[]{0}).ToArray());
             
-           
             // Console.WriteLine(byte0);
             // Console.WriteLine(byte1);
             // Console.WriteLine(byte2);
@@ -91,13 +84,19 @@ namespace rad{
                 01011100 00010110 11101001 00111000 10101010 00001100 01000011 00100001 11001011 00010111 11101110 0
                 01010000 00100110 01100111 01101000 11111001 10111001 10000000 10010100 11101111 10100111 00101111 1
             */
-            
-            int b = 61;
-            
-            double p1 = Math.Pow(2, b);
-            BigInteger p = new BigInteger(p1) - 1;
 
             
+            // UInt64 p = (UInt64)(Math.Pow(2, 89)-1);
+            double p1 = Math.Pow(2, 61);
+            BigInteger p = new BigInteger(p1) - 1;
+
+            // UInt64 p = 
+            if (p!=0){
+            // Console.WriteLine(1);
+            // Console.WriteLine(p);
+            }
+
+            int b = 61;
             List<BigInteger> a = new List<BigInteger>();
             
             // we get random bytes correspding to the current index.
@@ -107,7 +106,6 @@ namespace rad{
             // thus the index needs to be incremented by 4 everytime Algorithm1 is called
             var tuple = randomBytes(index);
             // then we append them to the array
-         
             a.Add(tuple.Item1);
             a.Add(tuple.Item2);
             a.Add(tuple.Item3);
@@ -116,12 +114,8 @@ namespace rad{
             // a.Add(BigInteger.Parse("421326039502587756936392441"));	          
             // a.Add(BigInteger.Parse("222658739283255370454544348"));	      
             // a.Add(BigInteger.Parse("193790846148879967259151967"));	    
-
-// p=2305843009213693951
-
-// randombytes =  230584300921369395 (removed 1 so thye are always <=p)
-// in bits = 1100110011001100110011001100110011001100110011001100110011
-// length is 58
+            
+            
             int q = a.Capacity;
 
             BigInteger xB = new BigInteger(x);
@@ -135,10 +129,8 @@ namespace rad{
                 y = (y&p) + (y >> b);    
 
             }
-            // Console.WriteLine(tuple.Item1);
-            // Console.WriteLine(2*p); // p= 2^89-1
-            // Console.WriteLine(UInt64.MaxValue);
             // Console.WriteLine(y);
+            // Console.WriteLine((Int64)p);
             if (y >= p){
                 // Console.WriteLine("yes");
                 y = y - p;
@@ -146,7 +138,7 @@ namespace rad{
           
             // Console.WriteLine(p);
             // Console.WriteLine(y);
-            // Console.WriteLine(UInt64.MaxValue);
+
             return (UInt64)y;
         }
         
