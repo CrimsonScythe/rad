@@ -35,16 +35,16 @@ namespace rad
 
             // Exercise2();
             
-            // Exercise3(HashFuncType.mod);
+            Exercise3(HashFuncType.shift);
 
             // Exercise6(1000, 20);
             
             //var stream1 = Generator.CreateStream(10000,25);
             //AnnouncementPart1(stream1);
             
-            int l = 12;
-            var stream2 = Generator.CreateStream(100000, l);
-            AnnouncementPart2(stream2, l);
+            //int l = 12;
+            //var stream2 = Generator.CreateStream(100000, l);
+            //AnnouncementPart2(stream2, l);
         }
 
         static void Exercise2()
@@ -156,13 +156,13 @@ namespace rad
 
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
-            SFunc(stream, l, HashFuncType.shift);
+            UInt64 S = SFunc(stream, l, HashFuncType.shift);
             
             int index=0;
             double MSE=0;
             double mean=0;
             // the value S is in reality just the number of items in the data stream
-            int S = stream.Count();
+            
             
            
             List<double> estimatesUnsorted = new List<double>();
@@ -204,19 +204,23 @@ namespace rad
         
         
         static void Exercise3(HashFuncType type) {
+            Console.WriteLine("type: " + type + "\nn=1,000,000" +"\n___________");
             // l=1 .. 25
             // n=1000000
            
             int n=1000000;
-            List<int> llist = new List<int> {5,10,15,20,25};
+            List<int> llist = new List<int> {5, 10, 15, 20, 25};
             var watch = new Stopwatch();
         
 
-            foreach (int lval in llist){
+            foreach (int lval in llist)
+            {
+                Console.WriteLine("l-value: " + lval);
                 watch.Start();
                 SFunc(Generator.CreateStream(n, lval), lval, type);
                 watch.Stop();
-                Console.WriteLine("type: " +type + " l is: " + lval+ " time: " + watch.ElapsedMilliseconds);
+                Console.WriteLine("total time: " + watch.ElapsedMilliseconds);
+                Console.WriteLine();
                 watch.Reset();
             }
             
@@ -272,10 +276,12 @@ namespace rad
             
         }
 
-        static void SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
+        static UInt64 SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
             // we begin by storing the key value pairs in the hash table using the hashfunctions
             HashTable hashTable = new HashTable(l, funcType);
             // the loop below computes s(x)
+            var watch = new Stopwatch();
+            watch.Start();
             foreach(Tuple<ulong, int> pair in stream){
                 
                 if (hashTable.get(pair.Item1)==0){ // key does not exist
@@ -284,7 +290,11 @@ namespace rad
                     hashTable.increment(pair.Item1, pair.Item2); // add value to already existing key value
                 }
             }
+            watch.Stop();
+            Console.WriteLine("Hashing to table took " + watch.ElapsedMilliseconds + "ms.");
 
+            watch.Reset();
+            watch.Start();
             // next we add the s(x)^2 above to compute S, as required
             UInt64 sum = 0UL;
             foreach(List<MutableKeyValuePair<int, int>> lst in hashTable.hashT){
@@ -292,8 +302,11 @@ namespace rad
                     sum += (ulong) Math.Pow(pair.Value, 2);
                 }
             }
+            watch.Stop();
+            Console.WriteLine("Calculating S took " + watch.ElapsedMilliseconds + "ms.");
 
             Console.WriteLine("S is:" + sum);
+            return sum;
         }
 
         static void WriteToCSV<T>(List<T> list, string filename) 
