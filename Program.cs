@@ -39,8 +39,8 @@ namespace rad
 
             // Exercise6(1000, 20);
             
-            // var stream1 = Generator.CreateStream(10000,25);
-            // AnnouncementPart1(stream1);
+            //var stream1 = Generator.CreateStream(10000,25);
+            //AnnouncementPart1(stream1);
             
             int l = 12;
             var stream2 = Generator.CreateStream(100000, l);
@@ -101,7 +101,7 @@ namespace rad
 
 
             watch.Restart();
-            double estimate = Algorithms.CountSketch(stream, epsilon, 0, 4);
+            double estimate = Algorithms.CountSketch(stream, 4);
             watch.Stop();
             Console.WriteLine("[CountSketch]\nl=25, m=16, t=4");
             Console.WriteLine("Estimate:" + estimate);
@@ -109,7 +109,7 @@ namespace rad
             Console.WriteLine();
 
             watch.Restart();
-            estimate = Algorithms.CountSketch(stream, epsilon, 4, 7);
+            estimate = Algorithms.CountSketch(stream, 7);
             watch.Stop();
             Console.WriteLine("[CountSketch]\nl=25, m=128, t=7");
             Console.WriteLine("Estimate:" + estimate);
@@ -117,7 +117,7 @@ namespace rad
             Console.WriteLine();
 
             watch.Restart();
-            estimate = Algorithms.CountSketch(stream, epsilon, 8, 10);
+            estimate = Algorithms.CountSketch(stream, 10);
             watch.Stop();
             Console.WriteLine("[CountSketch]\nl=25, m=1024, t=10");
             Console.WriteLine("Estimate:" + estimate);
@@ -127,7 +127,7 @@ namespace rad
         
         static void AnnouncementPart2(IEnumerable<Tuple<ulong , int>> stream, int l)
         {
-
+            Console.WriteLine("[CountSketch - 100 times]\nl=12, m=16, t=4");
             var answers = PerformCountSketch(stream, 4, l);
             var estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
@@ -135,6 +135,7 @@ namespace rad
             WriteToCSV(estimatesSorted, "estimates_sorted_m16.csv");
             WriteToCSV(answers.medians, "medians_m16.csv");
             
+            Console.WriteLine("[CountSketch - 100 times]\nl=12, m=128, t=7");
             answers = PerformCountSketch(stream, 7, l);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
@@ -142,6 +143,7 @@ namespace rad
             WriteToCSV(estimatesSorted, "estimates_sorted_m128.csv");
             WriteToCSV(answers.medians, "medians_m128.csv");
             
+            Console.WriteLine("[CountSketch - 100 times]\nl=12, m=1024, t=10");
             answers = PerformCountSketch(stream, 10, l);
             estimatesSorted = new List<double>(answers.estimatesUnsorted);
             estimatesSorted.Sort();
@@ -166,13 +168,10 @@ namespace rad
             List<double> estimatesUnsorted = new List<double>();
 
             for (int i = 0; i < 100; i++){
-                // i    = 0,1,2,3...
-                // index= 0,4,8,12
-                index = i*4;
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
                 // This is done in one go by our count sketch algorithm. It IS the estimate that it returns. 
-                double estimate = Algorithms.CountSketch(stream, epsilon, index, t);
-                Console.WriteLine(estimate);
+                double estimate = Algorithms.CountSketch(stream, t);
+                //Console.WriteLine(estimate);
                 estimatesUnsorted.Add(estimate);
                 // we compute the mean-square error
                 MSE += Math.Pow((estimate - S), 2);
@@ -186,6 +185,7 @@ namespace rad
             Console.WriteLine("mean-squared error:" + MSE);
             mean /= 100;
             Console.WriteLine("mean:" + mean);
+            Console.WriteLine();
             
             List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i + 6) % 11 == 0));
             M.Sort();
@@ -198,7 +198,7 @@ namespace rad
             IEnumerable<Tuple<ulong, int>> stream = Generator.CreateStream(n, l);
             var epsilon = 0.001;
             int t = (int) Math.Log2(8/(Math.Pow(epsilon, 2)));
-            var secondMoment = Algorithms.CountSketch(stream, 1, 0, t);
+            var secondMoment = Algorithms.CountSketch(stream, t);
             Console.WriteLine(secondMoment);
         }
         
