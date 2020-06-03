@@ -39,8 +39,8 @@ namespace rad
 
             // Exercise6(1000, 20);
             
-            //var stream1 = Generator.CreateStream(10000,25);
-            //AnnouncementPart1(stream1);
+            // var stream1 = Generator.CreateStream(10000,25);
+            // AnnouncementPart1(stream1);
             
             int l = 12;
             var stream2 = Generator.CreateStream(100000, l);
@@ -156,16 +156,17 @@ namespace rad
 
             // calculate S from hashing with chaining from part 1
             // bascially we get the exact value of n i.e. 10000
-            SFunc(stream, l, HashFuncType.shift);
+            var S = SFunc(stream, l, HashFuncType.shift);
             
             int index=0;
             double MSE=0;
             double mean=0;
             // the value S is in reality just the number of items in the data stream
-            int S = stream.Count();
+            // int S = stream.Count();
             
            
             List<double> estimatesUnsorted = new List<double>();
+            
 
             for (int i = 0; i < 100; i++){
                 // "[...] Beregn Count-Sketch af datastrømmen [...] Beregn estimateren X [...]"
@@ -187,7 +188,28 @@ namespace rad
             Console.WriteLine("mean:" + mean);
             Console.WriteLine();
             
-            List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i + 6) % 11 == 0));
+            // holds the medians
+            List<double> M = new List<double>();
+            int gindex=0;
+            int skip=0;
+
+            for (int i = 0; i < 9; i++){
+                // var marray = [];
+                
+                skip = 11 * i;
+
+                var arr = estimatesUnsorted.Skip(skip).Take(11);
+                
+                arr = arr.OrderBy(x => x);
+                
+                // # add median to list
+                M.Add(arr.ToList()[5]);
+            }
+
+            // estimatesUnsorted.Where((x, i) => )
+
+            // List<double> M = new List<double>(estimatesUnsorted.Where((x, i) => (i + 6) % 11 == 0));
+            // foreach (double ttt in M){Console.WriteLine(ttt);}
             M.Sort();
             
             return (estimatesUnsorted, MSE, mean, M);
@@ -272,7 +294,7 @@ namespace rad
             
         }
 
-        static void SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
+        static UInt64 SFunc(IEnumerable<Tuple<ulong , int>> stream, int l, HashFuncType funcType) {
             // we begin by storing the key value pairs in the hash table using the hashfunctions
             HashTable hashTable = new HashTable(l, funcType);
             // the loop below computes s(x)
@@ -294,6 +316,7 @@ namespace rad
             }
 
             Console.WriteLine("S is:" + sum);
+            return sum;
         }
 
         static void WriteToCSV<T>(List<T> list, string filename) 
